@@ -1,7 +1,15 @@
 # MarketView
  SYST30025 (Software Engineering)
+ Pages
 ---
+## Home Page
+![Home Page](./img/HomePage.png)
 
+## Stocks Page
+![Stocks Page](./img/StocksPage.png)
+
+## Analyzer
+![Analyzer](./img/Analyzer.png)
 ## ✅ Prerequisites
 
 - **Node.js** v18+ (includes npm)
