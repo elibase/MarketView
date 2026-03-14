@@ -9,7 +9,7 @@
 ![Stocks Page](./img/StocksPage.png)
 
 ## Analyzer
-![Analyzer](./img/Analyzer.png)
+![Analyzer](./img/AnalyzerPage.png)
 ## ✅ Prerequisites
 
 - **Node.js** v18+ (includes npm)
