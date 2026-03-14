@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<title>Financial News Scraper</title>
+<link rel="stylesheet" href="styles.css">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+
+<body>
+
+    <div class="container">
+
+        <div class="sidebar">
+            <a href="#">Stocks</a>
+            <a href="#">ML Analysis</a>
+        </div>
+
+        <div class="main">
+
+            <div class="header">
+                <h1>Financial News Scraper</h1>
+            </div>
+
+            <div class="grid-container">
+                <div class="grid-container-item">
+                    <form action="/submit-scraper-keyword" method="POST">
+                        <div class="search">
+                            <input type="text" id="scraper-keyword" name="scraper-keyword"
+                                placeholder="Enter Keyword...">
+                        </div>
+                        <button class="btn" type="submit">Add Keyword</button>
+                    </form>
+                </div>
+                <div class="grid-container-item">
+                    <p>Keywords</p>
+                    <div class="table-scroller">
+                        <table class="scraper-keyword-table">
+                            <tr>
+                                <th></th>
+                                <th></th>
+                            </tr>
+                            <tr>
+                                <form action="/remove-scraper-keyword" method="POST">
+                                    <td>AMZN</td>
+                                    <td><button type="submit">Remove</button></td>
+                                </form>
+                            </tr>
+                            <tr>
+                                <form action="/remove-scraper-keyword" method="POST">
+                                    <td>AMZN</td>
+                                    <td><button type="submit">Remove</button></td>
+                                </form>
+                            </tr>
+                            <tr>
+                                <form action="/remove-scraper-keyword" method="POST">
+                                    <td>AMZN</td>
+                                    <td><button type="submit">Remove</button></td>
+                                </form>
+                            </tr>
+                            <tr>
+                                <form action="/remove-scraper-keyword" method="POST">
+                                    <td>AMZN</td>
+                                    <td><button type="submit">Remove</button></td>
+                                </form>
+                            </tr>
+                            <tr>
+                                <form action="/remove-scraper-keyword" method="POST">
+                                    <td>AMZN</td>
+                                    <td><button type="submit">Remove</button></td>
+                                </form>
+                            </tr>
+                            <tr>
+                                <form action="/remove-scraper-keyword" method="POST">
+                                    <td>AMZN</td>
+                                    <td><button type="submit">Remove</button></td>
+                                </form>
+                            </tr>
+                            <tr>
+                                <form action="/remove-scraper-keyword" method="POST">
+                                    <td>AMZN</td>
+                                    <td><button type="submit">Remove</button></td>
+                                </form>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="column-span">
+                    <button class="btn" onclick="myFunction()">Gather Articles</button>
+                    <hr>
+                </div>
+
+                <div class="column-span">
+                    <table>
+
+                        <tr>
+                            <th>Keyword</th>
+                            <th>Symbol</th>
+                            <th>Last</th>
+                            <th>Volume</th>
+                            <th></th>
+                        </tr>
+
+                        <tr>
+                            <td><input type="checkbox"></td>
+                            <td>AMZN</td>
+                            <td>206.98</td>
+                            <td>2.10m</td>
+                            <td><a href="#" class="news-link">News</a></td>
+                        </tr>
+
+                        <tr>
+                            <td><input type="checkbox"></td>
+                            <td>TSLA</td>
+                            <td>393.20</td>
+                            <td>5.10m</td>
+                            <td><a href="#" class="news-link">News</a></td>
+                        </tr>
+
+                        <tr>
+                            <td><input type="checkbox"></td>
+                            <td>GOOGL</td>
+                            <td>300.66</td>
+                            <td>1.25m</td>
+                            <td><a href="#" class="news-link">News</a></td>
+                        </tr>
+
+                        <tr>
+                            <td><input type="checkbox"></td>
+                            <td>META</td>
+                            <td>610.55</td>
+                            <td>1.87m</td>
+                            <td><a href="#" class="news-link">News</a></td>
+                        </tr>
+
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
