@@ -100,6 +100,24 @@ th{
     background:#f9fafb;
 }
 
+table.article-table {
+  /* Set a width for the table (e.g., 100%) to provide a reference point for max-width */
+  width: 100%;
+  table-layout: fixed; /* Helps in consistent column width rendering across browsers */
+}
+
+table.article-table td, table.article-table th {
+    max-width: 150px; /* The desired maximum width */
+    overflow: hidden; /* Hides content that exceeds the cell width */
+    text-overflow: ellipsis; /* Displays an ellipsis (...) for clipped text */
+    white-space: nowrap; /* Prevents text from wrapping to a new line */
+}
+/*
+table.article-table a::after{
+    content: attr(href);
+}
+*/
+
 /* News links */
 
 .news-link{
@@ -110,3 +128,39 @@ th{
 .news-link:hover{
     text-decoration:underline;
 }
+
+.grid-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 300px 50px 300px; /* First row is 300px high, second auto-sizes */
+    align-items: center;
+    }
+
+.grid-container-item {
+  padding: 20px;
+  text-align: center;
+}
+
+.grid-container > .column-span {
+  grid-column: span 2;
+  text-align: center;
+  align-items: center;
+}
+
+.table-scroller {
+    max-height: 200px; /* Or a fixed height */
+    overflow-y: auto;
+}
+
+table.keyword-table {    
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    max-height: 300px; /* Or a fixed height */
+    overflow-y: auto;
+}
+
+table.keyword-table th, table.keyword-table td{
+    text-align: center;
+}
+
