@@ -1,12 +1,17 @@
 # MarketView
  SYST30025 (Software Engineering)
- Pages
+ 
+
+ ## Pages
 ---
 ## Home Page
 ![Home Page](./img/HomePage.png)
 
 ## Stocks Page
 ![Stocks Page](./img/StocksPage.png)
+
+## News Page
+![Stocks Page](./img/NewsScraperPage.png)
 
 ## Analyzer
 ![Analyzer](./img/AnalyzerPage.png)
