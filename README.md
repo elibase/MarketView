@@ -99,3 +99,17 @@ If you don’t have a Finnhub key, sign up at https://finnhub.io/ and generate o
 (required for using routes that  perform analysis)
 
 ---
+
+## 🛠 Testing Webpages
+
+To test website functionality and navigation:
+
+1. Download and open `Visual Studio Code`.
+2. Download the `Live Server` Extension.
+![Live Server](./img/VSCodeLiveServer.png)
+3. Click the `Go Live` button in the bottom bar.
+![Live Server Tutorial](./img/GoLiveTutorial.png)
+4. If an internet browser tab does not open, record the port number listed after pressing `Go Live`.
+5. In an internet browser address bar, type in `localhost:PORT_NUMBER` (likely to be `localhost:5500`).
+
+---
