@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <title>Financial News Scraper</title>
-<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="scraper.css">
 
 <head>
     <meta charset="UTF-8">
@@ -13,8 +13,10 @@
     <div class="container">
 
         <div class="sidebar">
-            <a href="#">Stocks</a>
-            <a href="#">ML Analysis</a>
+            <a href="../index.html">Home</a>
+            <a href="stocks.html">Stocks</a>
+            <a href="scraper.html">News</a>
+            <a href="analyzer.html">Analyzer</a>
         </div>
 
         <div class="main">
@@ -36,7 +38,7 @@
                 <div class="grid-container-item">
                     <p>Keywords</p>
                     <div class="table-scroller">
-                        <table class="scraper-keyword-table">
+                        <table class="keyword-table">
                             <tr>
                                 <th></th>
                                 <th></th>
@@ -44,43 +46,7 @@
                             <tr>
                                 <form action="/remove-scraper-keyword" method="POST">
                                     <td>AMZN</td>
-                                    <td><button type="submit">Remove</button></td>
-                                </form>
-                            </tr>
-                            <tr>
-                                <form action="/remove-scraper-keyword" method="POST">
-                                    <td>AMZN</td>
-                                    <td><button type="submit">Remove</button></td>
-                                </form>
-                            </tr>
-                            <tr>
-                                <form action="/remove-scraper-keyword" method="POST">
-                                    <td>AMZN</td>
-                                    <td><button type="submit">Remove</button></td>
-                                </form>
-                            </tr>
-                            <tr>
-                                <form action="/remove-scraper-keyword" method="POST">
-                                    <td>AMZN</td>
-                                    <td><button type="submit">Remove</button></td>
-                                </form>
-                            </tr>
-                            <tr>
-                                <form action="/remove-scraper-keyword" method="POST">
-                                    <td>AMZN</td>
-                                    <td><button type="submit">Remove</button></td>
-                                </form>
-                            </tr>
-                            <tr>
-                                <form action="/remove-scraper-keyword" method="POST">
-                                    <td>AMZN</td>
-                                    <td><button type="submit">Remove</button></td>
-                                </form>
-                            </tr>
-                            <tr>
-                                <form action="/remove-scraper-keyword" method="POST">
-                                    <td>AMZN</td>
-                                    <td><button type="submit">Remove</button></td>
+                                    <td><button class="btn" type="submit">Remove</button></td>
                                 </form>
                             </tr>
                         </table>
@@ -88,58 +54,56 @@
                 </div>
 
                 <div class="column-span">
-                    <button class="btn" onclick="myFunction()">Gather Articles</button>
+                    <button class="btn" id="gatherArticlesButton">Gather Articles</button>
                     <hr>
                 </div>
 
                 <div class="column-span">
-                    <table>
+                    <div class="table-scroller">
+                        <table id="articleTable" class="article-table">
+                            <thead>
+                                <tr>
+                                    <th>Keyword</th>
+                                    <th>Article</th>
+                                    <th>Publisher</th>
+                                    <th>Publish Date</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody id="articleTableBody">
 
-                        <tr>
-                            <th>Keyword</th>
-                            <th>Symbol</th>
-                            <th>Last</th>
-                            <th>Volume</th>
-                            <th></th>
-                        </tr>
 
-                        <tr>
-                            <td><input type="checkbox"></td>
-                            <td>AMZN</td>
-                            <td>206.98</td>
-                            <td>2.10m</td>
-                            <td><a href="#" class="news-link">News</a></td>
-                        </tr>
 
-                        <tr>
-                            <td><input type="checkbox"></td>
-                            <td>TSLA</td>
-                            <td>393.20</td>
-                            <td>5.10m</td>
-                            <td><a href="#" class="news-link">News</a></td>
-                        </tr>
+                                <!--
+                                <tr>
+                                    <td>AMZN</td>
+                                    <td><a
+                                            href="https://www.bloomberg.com/news/articles/2026-03-12/amazon-plans-to-shift-annual-prime-day-sale-to-june-from-july">Amazon
+                                            Plans to Shift Annual Prime Day Sale to June From July</a></td>
+                                    <td>Bloomberg</td>
+                                    <td>March 12, 2026</td>
+                                    <td><button class="btn">Analysis</button></td>
+                                </tr>
 
-                        <tr>
-                            <td><input type="checkbox"></td>
-                            <td>GOOGL</td>
-                            <td>300.66</td>
-                            <td>1.25m</td>
-                            <td><a href="#" class="news-link">News</a></td>
-                        </tr>
+                                <tr>
+                                    <td>AMZN</td>
+                                    <td><a
+                                            href="https://www.cnet.com/tech/services-and-software/amazon-to-increase-the-price-of-ad-free-prime-video-streaming/">Amazon
+                                            to Increase the Price of Ad-Free Prime Video Streaming</a></td>
+                                    <td>CNET</td>
+                                    <td>March 13, 2026</td>
+                                    <td><button class="btn">Analysis</button></td>
+                                </tr>
+                                -->
+                            </tbody>
+                        </table>
+                    </div>
 
-                        <tr>
-                            <td><input type="checkbox"></td>
-                            <td>META</td>
-                            <td>610.55</td>
-                            <td>1.87m</td>
-                            <td><a href="#" class="news-link">News</a></td>
-                        </tr>
-
-                    </table>
                 </div>
             </div>
         </div>
     </div>
+    <script src="scripts/scraper.js" defer></script>
 </body>
 
 </html>
