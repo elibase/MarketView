@@ -39,6 +39,8 @@ function addDataToTable(data) {
                 const ahref = document.createElement('a');
                 ahref.href = item.link;
                 ahref.textContent = item.title;
+                ahref.target = '_blank';
+                ahref.rel = 'noopener noreferrer';
                 cell.appendChild(ahref);
                 row.appendChild(cell);
                 return;
