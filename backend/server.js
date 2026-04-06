@@ -4,6 +4,9 @@ const cors = require('cors')
 const { getNews } = require('./services/newsService')
 const app = express()
 const port = 3000
+const keywords = []
+
+app.use(express.json());
 
 app.use(cors({
     origin: 'http://localhost:5173'
@@ -15,6 +18,26 @@ app.get('/', (req, res) => {
 
 app.get('/api/message', (req, res) => {
     res.json({ message: "Hello from the Node server!" });
+});
+
+app.post('/api/data', (req, res) => {
+    const keywordList = req.body;
+    res.json({ message: "Data received successfully!", apple: "apple", kwl: keywordList});
+});
+
+app.post('/api/addKeyword', (req, res) => {
+    const newKeyword = req.body;
+    //res.json({successful: newKeyword})
+    
+const keywordIsNew = !(keywords.includes(newKeyword));
+    if (keywordIsNew) {
+        keywords.push(newKeyword)
+        res.json({ successful: "true"});
+    } else {
+        res.json({ successful: "false"});
+    }
+    
+    
 });
 
 app.get('/test-news', async (req, res) => {

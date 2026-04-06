@@ -3,8 +3,11 @@ import React, { useEffect, useState } from 'react';
 
 export default function ScraperView(){
     const [data, setData] = useState("");
+    const [keyword, SetKeyword] = useState("");
+    const [keywords, SetKeywords] = useState("");
+    const [articles, setArticles] = useState("");
 
-    const callServer = async () => {
+    const demoCallServer = async () => {
         try {
             const res = await fetch('http://localhost:3000/api/message');
             const result = await res.json();
@@ -13,6 +16,51 @@ export default function ScraperView(){
             console.error("Error calling server: ", error)
         }
     }
+
+    const handleAddKeyword = async (event) => {
+        event.preventDefault();
+        if (keyword){
+            console.log(keyword)
+        }
+
+        if (keyword) {
+            try {
+                const response = await fetch('http://localhost:3000/api/addKeyword', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message: keyword }) // Your parameters
+                });
+                const result = await response.json();
+                console.log("Adding keyword was successful: ", result.successful)
+            } catch (error) {
+                console.error("Error calling server: ", error)
+            }
+        }
+
+        
+
+    }
+
+    const handleSubmit = async (event) => {
+        event.preventDefault();
+        const exampleKeywords = ["AMZN", "Amazon"];
+        
+        try {
+            const response = await fetch('http://localhost:3000/api/data', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(exampleKeywords) // Your parameters
+            });
+            const result = await response.json();
+            console.log(result)
+            setArticles(result.kwl)
+        } catch (error) {
+            console.error("Error calling server: ", error)
+        }
+        
+    }
+
+    
 
     useEffect(() => {
         console.log("Page loaded!");
@@ -26,8 +74,13 @@ export default function ScraperView(){
     return(
         <div class="main">
             <div>
-                <button onClick={callServer}>Call Node Server</button>
-                <p>Reponse: {data}</p>
+                <button onClick={demoCallServer}>Call Node Server</button>
+                <p>Response: {data}</p>
+            </div>
+
+            <div>
+                <button onClick={handleSubmit}>Call Node Server 2</button>
+                <p>Response: {articles}</p>
             </div>
             <div class="header">
                 <h1>Financial News Scraper</h1>
@@ -35,12 +88,14 @@ export default function ScraperView(){
 
             <div class="grid-container">
                 <div class="grid-container-item">
-                    <form action="/submit-scraper-keyword" method="POST">
+                    <form onSubmit={handleAddKeyword}>
                         <div class="search">
                             <input
-                                id="scraper-keyword" 
-                                name="scraper-keyword"
-                                type="text" 
+                                id="keyword" 
+                                type="text"
+                                value={keyword}
+                                onChange={(e) => SetKeyword(e.target.value)}
+                                autoComplete="off"
                                 placeholder="Enter Keyword..."
                             />
                         </div>
