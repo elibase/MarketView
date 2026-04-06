@@ -2,18 +2,11 @@ import "../assets/scraper.css"
 import React, { useEffect, useState } from 'react';
 
 export default function ScraperView() {
+    const [refresh, setRefresh] = useState(0);
     const [data, setData] = useState("");
-    const [keyword, SetKeyword] = useState("");
-    const [keywords, SetKeywords] = useState("");
+    const [keyword, setKeyword] = useState("");
+    const [keywords, setKeywords] = useState([""]);
     const [articles, setArticles] = useState("");
-    const ex = [
-        { name: "Alpha" },
-        { name: "Bravo" },
-        { name: "Charlie" },
-        { name: "Delta" },
-        { name: "Epsilon" },
-        { name: "Foxtrox" }
-    ];
 
     const demoCallServer = async () => {
         try {
@@ -25,24 +18,17 @@ export default function ScraperView() {
         }
     }
 
-    const handleLoadKeywords = async (event) => {
-        event.preventDefault();
-        if (keyword) {
-            console.log(keyword)
-        }
-
-        if (keyword) {
-            try {
-                const response = await fetch('http://localhost:3000/api/addKeyword', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ message: keyword }) // Your parameters
-                });
-                const result = await response.json();
-                console.log("Adding keyword was successful: ", result.successful)
-            } catch (error) {
-                console.error("Error calling server: ", error)
-            }
+    const handleRetrieveKeywords = async (event) => {
+        try {
+            const response = await fetch('http://localhost:3000/api/retrieveKeywords', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' }
+            });
+            const result = await response.json();
+            console.log("Keywords retrieved: ", result.message);
+            setKeywords(result.message);
+        } catch (error) {
+            console.error("Error calling server: ", error)
         }
     }
 
@@ -60,7 +46,12 @@ export default function ScraperView() {
                     body: JSON.stringify({ message: keyword }) // Your parameters
                 });
                 const result = await response.json();
-                console.log("Adding keyword was successful: ", result.successful)
+                console.log("Adding keyword was successful: ", result.successful);
+                if (result.successful === "true") {
+                    setKeywords([...keywords, keyword])
+                }
+                setRefresh(prev => prev + 1);
+
             } catch (error) {
                 console.error("Error calling server: ", error)
             }
@@ -78,6 +69,11 @@ export default function ScraperView() {
                     });
                     const result = await response.json();
                     console.log("Removal of keyword was successful: ", result.successful)
+                    if (result.successful === "true") {
+                        const updatedKeywords = keywords.filter(keyword => keyword !== keywordName);
+                        setKeywords(updatedKeywords)
+                    }
+                    setRefresh(prev => prev + 1);
                 } catch (error) {
                     console.error("Error calling server: ", error)
                 }
@@ -93,12 +89,12 @@ export default function ScraperView() {
                     </tr>
                 </thead>
                 <tbody>
-            {ex.map((keyword) => (
-              <tr key={keyword.name}>
-                <td>{keyword.name}</td>
-                <td><button onClick={() => handleRemoveKeyword(keyword.name)}>Remove</button></td>
-              </tr>
-            ))}
+                    {keywords.map((keyword) => (
+                        <tr key={keyword}>
+                            <td>{keyword}</td>
+                            <td><button onClick={() => handleRemoveKeyword(keyword)}>Remove</button></td>
+                        </tr>
+                    ))}
                 </tbody>
             </table>
         );
@@ -123,13 +119,9 @@ export default function ScraperView() {
 
     }
 
-    const myAutoFunction = () => {
-
-    };
-
     useEffect(() => {
         console.log("Page loaded!");
-        myAutoFunction();
+        handleRetrieveKeywords();
     }, []);
 
 
@@ -156,7 +148,7 @@ export default function ScraperView() {
                                 id="keyword"
                                 type="text"
                                 value={keyword}
-                                onChange={(e) => SetKeyword(e.target.value)}
+                                onChange={(e) => setKeyword(e.target.value)}
                                 autoComplete="off"
                                 placeholder="Enter Keyword..."
                             />

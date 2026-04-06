@@ -45,6 +45,10 @@ app.post('/api/removeKeyword', (req, res) => {
         res.json({ successful: "false" });
     }
 });
+
+app.post('/api/retrieveKeywords', (req, res) => {
+    res.json({ message: keywords });
+});
 // END OF SCRAPER API CALLS
 
 app.get('/test-news', async (req, res) => {
