@@ -4,7 +4,7 @@ const cors = require('cors')
 const { getNews } = require('./services/newsService')
 const app = express()
 const port = 3000
-const keywords = []
+const keywords = ["Amazon", "AMZN", "Google", "GOOG", "Tesla", "TSLA"] // Hardcoded
 
 app.use(express.json());
 
@@ -13,7 +13,7 @@ app.use(cors({
 }));
 
 app.get('/', (req, res) => {
-  res.send('Hello World!')
+    res.send('Hello World!')
 })
 
 app.get('/api/message', (req, res) => {
@@ -22,22 +22,32 @@ app.get('/api/message', (req, res) => {
 
 app.post('/api/data', (req, res) => {
     const keywordList = req.body;
-    res.json({ message: "Data received successfully!", apple: "apple", kwl: keywordList});
+    res.json({ message: "Data received successfully!", apple: "apple", kwl: keywordList });
 });
 
 app.post('/api/addKeyword', (req, res) => {
     const newKeyword = req.body;
     //res.json({successful: newKeyword})
-    
-const keywordIsNew = !(keywords.includes(newKeyword));
+
+    const keywordIsNew = !(keywords.includes(newKeyword.message));
     if (keywordIsNew) {
-        keywords.push(newKeyword)
-        res.json({ successful: "true"});
+        keywords.push(newKeyword.message)
+        res.json({ successful: "true" });
     } else {
-        res.json({ successful: "false"});
+        res.json({ successful: "false" });
     }
-    
-    
+});
+
+app.post('/api/removeKeyword', (req, res) => {
+    const keywordToRemove = req.body.message;
+    const index = keywords.indexOf(keywordToRemove);
+
+    if (index > -1) {
+        keywords.splice(index, 1);
+        res.json({ successful: "true" });
+    } else {
+        res.json({ successful: "false" });
+    }
 });
 
 app.get('/test-news', async (req, res) => {
@@ -62,13 +72,13 @@ app.get('/test-news', async (req, res) => {
 
     } catch (error) {
         console.error("Test Route Error:", error);
-        res.status(500).json({ 
-            error: "Failed to fetch news", 
-            message: error.message 
+        res.status(500).json({
+            error: "Failed to fetch news",
+            message: error.message
         });
     }
 });
 
 app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`)
+    console.log(`Example app listening on port ${port}`)
 })

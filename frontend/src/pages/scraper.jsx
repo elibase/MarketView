@@ -1,11 +1,19 @@
 import "../assets/scraper.css"
 import React, { useEffect, useState } from 'react';
 
-export default function ScraperView(){
+export default function ScraperView() {
     const [data, setData] = useState("");
     const [keyword, SetKeyword] = useState("");
     const [keywords, SetKeywords] = useState("");
     const [articles, setArticles] = useState("");
+    const ex = [
+        { name: "Alpha" },
+        { name: "Bravo" },
+        { name: "Charlie" },
+        { name: "Delta" },
+        { name: "Epsilon" },
+        { name: "Foxtrox" }
+    ];
 
     const demoCallServer = async () => {
         try {
@@ -17,18 +25,18 @@ export default function ScraperView(){
         }
     }
 
-    const handleAddKeyword = async (event) => {
+    const handleLoadKeywords = async (event) => {
         event.preventDefault();
-        if (keyword){
+        if (keyword) {
             console.log(keyword)
         }
 
         if (keyword) {
             try {
                 const response = await fetch('http://localhost:3000/api/addKeyword', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ message: keyword }) // Your parameters
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message: keyword }) // Your parameters
                 });
                 const result = await response.json();
                 console.log("Adding keyword was successful: ", result.successful)
@@ -36,20 +44,75 @@ export default function ScraperView(){
                 console.error("Error calling server: ", error)
             }
         }
+    }
 
-        
+    const handleAddKeyword = async (event) => {
+        event.preventDefault();
+        if (keyword) {
+            //console.log(keyword)
+        }
 
+        if (keyword) {
+            try {
+                const response = await fetch('http://localhost:3000/api/addKeyword', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message: keyword }) // Your parameters
+                });
+                const result = await response.json();
+                console.log("Adding keyword was successful: ", result.successful)
+            } catch (error) {
+                console.error("Error calling server: ", error)
+            }
+        }
+    }
+
+    function KeywordTable() {
+        const handleRemoveKeyword = async (keywordName) => {
+            if (keywordName) {
+                try {
+                    const response = await fetch('http://localhost:3000/api/removeKeyword', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ message: keywordName }) // Your parameters
+                    });
+                    const result = await response.json();
+                    console.log("Removal of keyword was successful: ", result.successful)
+                } catch (error) {
+                    console.error("Error calling server: ", error)
+                }
+            }
+        }
+
+        return (
+            <table class="keyword-table">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+            {ex.map((keyword) => (
+              <tr key={keyword.name}>
+                <td>{keyword.name}</td>
+                <td><button onClick={() => handleRemoveKeyword(keyword.name)}>Remove</button></td>
+              </tr>
+            ))}
+                </tbody>
+            </table>
+        );
     }
 
     const handleSubmit = async (event) => {
         event.preventDefault();
         const exampleKeywords = ["AMZN", "Amazon"];
-        
+
         try {
             const response = await fetch('http://localhost:3000/api/data', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(exampleKeywords) // Your parameters
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(exampleKeywords) // Your parameters
             });
             const result = await response.json();
             console.log(result)
@@ -57,21 +120,21 @@ export default function ScraperView(){
         } catch (error) {
             console.error("Error calling server: ", error)
         }
-        
+
     }
-
-    
-
-    useEffect(() => {
-        console.log("Page loaded!");
-        myAutoFunction();
-    },    []);
 
     const myAutoFunction = () => {
 
     };
-    
-    return(
+
+    useEffect(() => {
+        console.log("Page loaded!");
+        myAutoFunction();
+    }, []);
+
+
+
+    return (
         <div class="main">
             <div>
                 <button onClick={demoCallServer}>Call Node Server</button>
@@ -85,13 +148,12 @@ export default function ScraperView(){
             <div class="header">
                 <h1>Financial News Scraper</h1>
             </div>
-
             <div class="grid-container">
                 <div class="grid-container-item">
                     <form onSubmit={handleAddKeyword}>
                         <div class="search">
                             <input
-                                id="keyword" 
+                                id="keyword"
                                 type="text"
                                 value={keyword}
                                 onChange={(e) => SetKeyword(e.target.value)}
@@ -106,6 +168,11 @@ export default function ScraperView(){
                 <div class="grid-container-item">
                     <p>Keywords</p>
                     <div class="table-scroller">
+                        {KeywordTable()}
+                    </div>
+
+                    {/* 
+                    <div class="table-scroller">
                         <table class="keyword-table">
                             <tr>
                                 <th></th>
@@ -119,6 +186,7 @@ export default function ScraperView(){
                             </tr>
                         </table>
                     </div>
+                    */}
                 </div>
 
                 <div class="column-span">
