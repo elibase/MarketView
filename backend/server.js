@@ -20,11 +20,7 @@ app.get('/api/message', (req, res) => {
     res.json({ message: "Hello from the Node server!" });
 });
 
-app.post('/api/data', (req, res) => {
-    const keywordList = req.body;
-    res.json({ message: "Data received successfully!", apple: "apple", kwl: keywordList });
-});
-
+// START OF SCRAPER API CALLS
 app.post('/api/addKeyword', (req, res) => {
     const newKeyword = req.body;
     //res.json({successful: newKeyword})
@@ -49,6 +45,7 @@ app.post('/api/removeKeyword', (req, res) => {
         res.json({ successful: "false" });
     }
 });
+// END OF SCRAPER API CALLS
 
 app.get('/test-news', async (req, res) => {
     try {
