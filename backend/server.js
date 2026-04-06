@@ -8,6 +8,10 @@ app.get('/', (req, res) => {
   res.send('Hello World!')
 })
 
+app.get('/api/message', (req, res) => {
+    res.json({ message: "Hello from the Node server!" });
+});
+
 app.get('/test-news', async (req, res) => {
     try {
         // 1. Grab the ticker from the URL: http://localhost:3000/test-news?ticker=AAPL
