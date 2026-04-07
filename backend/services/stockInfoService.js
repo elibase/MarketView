@@ -24,7 +24,6 @@ exports.getStockData = async () => {
     try {
       let result = await yahooFinance.quote(symbol);
       result = createStock(result);
-      console.log(result);
       results.push(result);
     } catch (error) {
       if (error instanceof yahooFinance.errors.FailedYahooValidationError) {

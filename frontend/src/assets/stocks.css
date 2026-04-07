@@ -1,112 +1,166 @@
-body{
-    margin:0;
-    font-family: Arial, Helvetica, sans-serif;
-    background:#f5f6fa;
+* {
+  box-sizing: border-box;
 }
 
-/* Layout */
-
-.container{
-    display:flex;
-    min-height:100vh;
+body {
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  background: #e9ebef;
+  color: #111827;
 }
 
-/* Sidebar */
-
-.sidebar{
-    width:150px;
-    background:#1f2937;
-    padding:20px;
+.page {
+  padding: 32px;
 }
 
-.sidebar a{
-    display:block;
-    color:white;
-    text-decoration:none;
-    padding:12px 14px;
-    margin-bottom:10px;
-    border-radius:6px;
+.stock-database-card {
+  background: #f8f8f9;
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  padding: 28px;
+  max-width: 1100px;
 }
 
-.sidebar a:hover{
-    background:#374151;
+.card-header h1 {
+  margin: 0 0 24px;
+  font-size: 2rem;
+  font-weight: 700;
+  color: #111827;
 }
 
-/* Main content */
-
-.main{
-    flex:1;
-    padding:40px;
+.toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
 }
 
-/* Header */
-
-.header{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    margin-bottom:20px;
+.search-wrapper {
+  flex: 1;
+  min-width: 260px;
 }
 
-.header h1{
-    margin:0;
+.search-input {
+  width: 100%;
+  max-width: 420px;
+  padding: 14px 16px;
+  border: 1px solid #d1d5db;
+  border-radius: 10px;
+  background: #ffffff;
+  font-size: 0.95rem;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
-/* Button-style link */
-
-.btn{
-    text-decoration:none;
-    padding:10px 16px;
-    background:#2563eb;
-    color:white;
-    border-radius:6px;
+.search-input:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
 }
 
-.btn:hover{
-    background:#1d4ed8;
+.portfolio-button {
+  padding: 13px 20px;
+  border: none;
+  border-radius: 10px;
+  background: #2563eb;
+  color: white;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.15s ease;
 }
 
-/* Search */
-
-.search{
-    margin-bottom:20px;
+.portfolio-button:hover {
+  background: #1d4ed8;
 }
 
-.search input{
-    padding:10px;
-    width:300px;
-    border:1px solid #ddd;
-    border-radius:6px;
+.portfolio-button:active {
+  transform: translateY(1px);
 }
 
-/* Table */
-
-table{
-    width:100%;
-    border-collapse:collapse;
-    background:white;
-    border-radius:8px;
-    overflow:hidden;
-    box-shadow:0 2px 6px rgba(0,0,0,0.05);
+.table-wrapper {
+  overflow-x: auto;
+  background: #ffffff;
+  border-radius: 14px;
+  border: 1px solid #e5e7eb;
 }
 
-th, td{
-    text-align:left;
-    padding:14px;
-    border-bottom:1px solid #eee;
+.stock-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 700px;
 }
 
-th{
-    background:#f9fafb;
+.stock-table thead {
+  background: #f3f4f6;
 }
 
-/* News links */
-
-.news-link{
-    text-decoration:none;
-    color:#2563eb;
+.stock-table th,
+.stock-table td {
+  text-align: left;
+  padding: 18px 16px;
+  border-bottom: 1px solid #e5e7eb;
+  vertical-align: middle;
 }
 
-.news-link:hover{
-    text-decoration:underline;
+.stock-table th {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #374151;
+}
+
+.stock-table tbody tr {
+  transition: background 0.2s ease;
+}
+
+.stock-table tbody tr:hover {
+  background: #f9fafb;
+}
+
+.checkbox-col {
+  width: 48px;
+}
+
+.stock-symbol {
+  font-weight: 700;
+  color: #111827;
+}
+
+.stock-name {
+  font-size: 0.85rem;
+  color: #6b7280;
+  margin-top: 3px;
+}
+
+.news-button {
+  padding: 10px 18px;
+  border: 1px solid #cbd5e1;
+  border-radius: 10px;
+  background: #f8fafc;
+  color: #1f2937;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.news-button:hover {
+  background: #eef2ff;
+  border-color: #93c5fd;
+}
+
+.positive {
+  color: #15803d;
+  font-weight: 600;
+}
+
+.negative {
+  color: #dc2626;
+  font-weight: 600;
+}
+
+input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
 }

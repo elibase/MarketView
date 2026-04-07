@@ -1,83 +1,95 @@
-import "../assets/stocks.css"
+import { useState } from "react";
+import "../assets/stocks.css";
+import "../services/api.js";
+import { useEffect } from "react";
+import { getStocks } from "../services/api.js";
 
 export default function StocksView(){
 
-    return(
-        <div class="main">
+    const [stocks, setStocks] = useState([]);
+    const [searchTerm, setSearchTerm] = useState("");
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState('');
 
-            <div class="header">
-                <h1>Financial News Scraper</h1>
+    useEffect(() => {
+        async function loadStocks(){
+            try{
+                const data = await getStocks();
+                setStocks(data.data || data);
+            }catch (error){
+                setError(error.message);
+            }finally{
+                setLoading(false);
+            }
+        }
+
+        loadStocks();
+    }, []);
+
+    const filteredStocks = stocks.filter((stock) => 
+        stock.symbol.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
+    // Temporary cases
+    if(error) return <p>{error}</p>
+
+    return(
+        <div class="page">
+            <div class="stock-database-card">
+                <div class="card-header">
+                <h1>Stock Database</h1>
             </div>
 
-            <div class="grid-container">
-                <div class="grid-container-item">
-                    <form action="/submit-scraper-keyword" method="POST">
-                        <div class="search">
-                            <input type="text" id="scraper-keyword" name="scraper-keyword"
-                                placeholder="Enter Keyword..."/>
-                        </div>
-                        <button class="btn" type="submit">Add Keyword</button>
-                    </form>
+            <div class="toolbar">
+                <div class="search-wrapper">
+                <input
+                    type="text"
+                    class="search-input"
+                    placeholder="Search stock ticker or company name"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    />
                 </div>
-                <div class="grid-container-item">
-                    <p>Keywords</p>
-                    <div class="table-scroller">
-                        <table class="keyword-table">
+
+                <button class="portfolio-button">Add to Portfolio</button>
+            </div>
+
+            <div class="table-wrapper">
+                <table class="stock-table">
+                    <thead>
+                        <tr>
+                        <th class="checkbox-col"></th>
+                        <th>Symbol</th>
+                        <th>Last</th>
+                        <th>Vol</th>
+                        <th>Change</th>
+                        <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {loading ? (
                             <tr>
-                                <th></th>
-                                <th></th>
+                                <td colSpan="6" className="stock-symbol">Loading...</td>
                             </tr>
-                            <tr>
-                                <form action="/remove-scraper-keyword" method="POST">
-                                    <td>AMZN</td>
-                                    <td><button class="btn" type="submit">Remove</button></td>
-                                </form>
-                            </tr>
-                        </table>
-                    </div>
-                </div>
-
-                <div class="column-span">
-                    <button class="btn" id="gatherArticlesButton">Gather Articles</button>
-                </div>
-
-                <div class="column-span">
-                    <div class="table-scroller">
-                        <table id="articleTable" class="article-table">
-                            <thead>
-                                <tr>
-                                    <th>Keyword</th>
-                                    <th>Article</th>
-                                    <th>Publisher</th>
-                                    <th>Publish Date</th>
-                                    <th></th>
+                        ) : (
+                            filteredStocks.map((stock) => (
+                                <tr key={stock.symbol}>
+                                    <td><input type="checkbox" /></td>
+                                    <td>
+                                        <div className="stock-symbol">{stock.symbol}</div>
+                                        <div className="stock-name">{stock.name}</div>
+                                    </td>
+                                    <td>{stock.price}</td>
+                                    <td>{stock.volume}</td>
+                                    <td className={stock.changePercent > 0 ? "positive" : "negative"}>
+                                        {stock.changePercent}%
+                                    </td>
+                                    <td><button className="news-button">News</button></td>
                                 </tr>
-                            </thead>
-                            <tbody id="articleTableBody">
-
-                                <tr>
-                                    <td>AMZN</td>
-                                    <td><a
-                                            href="https://www.bloomberg.com/news/articles/2026-03-12/amazon-plans-to-shift-annual-prime-day-sale-to-june-from-july">Amazon
-                                            Plans to Shift Annual Prime Day Sale to June From July</a></td>
-                                    <td>Bloomberg</td>
-                                    <td>March 12, 2026</td>
-                                    <td><button class="btn">Analysis</button></td>
-                                </tr>
-
-                                <tr>
-                                    <td>AMZN</td>
-                                    <td><a
-                                            href="https://www.cnet.com/tech/services-and-software/amazon-to-increase-the-price-of-ad-free-prime-video-streaming/">Amazon
-                                            to Increase the Price of Ad-Free Prime Video Streaming</a></td>
-                                    <td>CNET</td>
-                                    <td>March 13, 2026</td>
-                                    <td><button class="btn">Analysis</button></td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-
+                            ))
+                        )}
+                    </tbody>
+                </table>
                 </div>
             </div>
         </div>
