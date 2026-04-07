@@ -34,9 +34,6 @@ export default function ScraperView() {
 
     const handleAddKeyword = async (event) => {
         event.preventDefault();
-        if (keyword) {
-            //console.log(keyword)
-        }
 
         if (keyword) {
             try {
@@ -47,7 +44,7 @@ export default function ScraperView() {
                 });
                 const result = await response.json();
                 console.log("Adding keyword was successful: ", result.successful);
-                if (result.successful === "true") {
+                if (result.successful) {
                     setKeywords([...keywords, keyword])
                 }
                 setRefresh(prev => prev + 1);
@@ -69,7 +66,7 @@ export default function ScraperView() {
                     });
                     const result = await response.json();
                     console.log("Removal of keyword was successful: ", result.successful)
-                    if (result.successful === "true") {
+                    if (result.successful) {
                         const updatedKeywords = keywords.filter(keyword => keyword !== keywordName);
                         setKeywords(updatedKeywords)
                     }
