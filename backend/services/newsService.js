@@ -12,6 +12,25 @@ const thirtyDaysAgo = new Date();
 thirtyDaysAgo.setDate(today.getDate() - 30);
 const fromDate = thirtyDaysAgo.toISOString().split('T')[0];
 
+function formatUnixDatetime(datetime) {
+    const isoDate = new Date(datetime * 1000).toISOString();
+    const dateObj = new Date(isoDate);
+
+    const options = {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+    };
+
+    const readable = new Intl.DateTimeFormat('en-US', options).format(dateObj);
+    return readable; // Output: "Monday, May 20, 2024"
+}
+
+async function tickerMapper(string) {
+
+}
+
 async function addKeyword(newKeyword, keywordArray) {
     // Assumes that newKeyword is simply a string consisting of a word.
     const keywordIsNew = !(keywordArray.includes(newKeyword));
@@ -57,7 +76,9 @@ async function getGeneralNews() {
         category: article.category,
         datetime: article.datetime,
         headline: article.headline,
+        source: article.source,
         summary: article.summary,
+        url: article.url
     }));
 }
 
@@ -80,8 +101,13 @@ async function getCompanyNews(ticker) {
     const response = await axios.get(url);
 
     return response.data.map(article => ({
+        category: article.category,
+        datetime: article.datetime,
+        readableDatetime: formatUnixDatetime(article.datetime),
         headline: article.headline,
+        source: article.source,
         summary: article.summary,
+        url: article.url
     }));
 }
 

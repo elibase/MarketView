@@ -7,19 +7,20 @@ export default function NewsView() {
     const [keyword, setKeyword] = useState("");
     const [keywords, setKeywords] = useState([""]);
     //const [articles, setArticles] = useState("");
+    const [RealArticles, setRealArticles] = useState([]);
     const articles = [
         {
             keyword: "AMZN",
             url: "https://www.bloomberg.com/news/articles/2026-03-12/amazon-plans-to-shift-annual-prime-day-sale-to-june-from-july",
             headline: "Amazon Plans to Shift Annual Prime Day Sale to June From July",
-            publisher: "Bloomberg",
+            source: "Bloomberg",
             datetime: "March 12, 2026"
         },
         {
             keyword: "AMZN",
             url: "https://www.cnet.com/tech/services-and-software/amazon-to-increase-the-price-of-ad-free-prime-video-streaming",
             headline: "Amazon to Increase the Price of Ad-Free Prime Video Streaming",
-            publisher: "CNET",
+            source: "CNET",
             datetime: "March 13, 2026"
         }
     ];
@@ -58,6 +59,19 @@ export default function NewsView() {
             } catch (error) {
                 console.error("Error calling server: ", error)
             }
+        }
+    }
+
+    const handleGetArticles = async (event) => {
+        try {
+            const response = await fetch('http://localhost:3000/api/getArticles', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' }
+            });
+            const result = await response.json();
+            console.log("Articles retrieved: ", result.message);
+        } catch (error) {
+            console.error("Error calling server: ", error)
         }
     }
 
@@ -131,8 +145,8 @@ export default function NewsView() {
                     <tr>
                         <th>Keyword</th>
                         <th>Article</th>
-                        <th>Publisher</th>
-                        <th>Publish Date</th>
+                        <th>Source</th>
+                        <th>Date</th>
                         <th></th>
                     </tr>
                 </thead>
@@ -141,7 +155,7 @@ export default function NewsView() {
                         <tr key={article.url}>
                             <td>{article.keyword}</td>
                             <td><a href={article.url}>{article.headline}</a></td>
-                            <td>{article.publisher}</td>
+                            <td>{article.source}</td>
                             <td>{article.datetime}</td>
                             <td><button class="btn">Analysis</button></td>
                             {/* <td><button onClick={() => handleArticleAnalysis(articleParameter)}>Analysis</button></td> */}
@@ -164,7 +178,7 @@ export default function NewsView() {
             <div class="header">
                 <h1>Financial News</h1>
             </div>
-            
+
             <div class="grid-container">
                 <div class="grid-container-item">
                     <form onSubmit={handleAddKeyword}>
@@ -190,7 +204,7 @@ export default function NewsView() {
                 </div>
 
                 <div class="column-span">
-                    <button class="btn" id="gatherArticlesButton">Gather Articles</button>
+                    <button class="btn" id="gatherArticlesButton" onClick={handleGetArticles}>Gather Articles</button>
                 </div>
 
                 <div class="column-span">
