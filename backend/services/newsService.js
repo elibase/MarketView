@@ -7,11 +7,42 @@ const API_KEY = process.env.API_KEY;
 // Converting Excel to JSON
 const XLSX = require('xlsx');
 const workbook = XLSX.readFile('./data/stocks-list.xlsx');
-const sheetName = workbook.SheetNames[2];
-const stocksJson = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName]);
 
 // Code to create JSON object from 3rd sheet of Excel file
-function iterate(obj) {
+function createCompanyBySymbolJson() {
+    const sheetName = workbook.SheetNames[0];
+    const obj = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName]);
+    const finalArray = [];
+
+    for (const key in obj) {
+        if (obj.hasOwnProperty(key)) {
+            const line = obj[key];
+            const newObj = { "symbol": line.Symbol, "company": line["Company Name"] };
+            finalArray.push(newObj);
+        }
+    }
+
+    const fs = require('fs');
+    // 1. Convert object to JSON string (with 2-space indentation)
+    const jsonData = JSON.stringify(finalArray, null, 2);
+
+    // 2. Write to file
+    fs.writeFile('./data/company-by-symbol.json', jsonData, 'utf8', (err) => {
+        if (err) {
+            console.error("An error occurred while writing JSON Object to File.", err);
+            return;
+        }
+        console.log("JSON file has been saved.");
+    });
+    
+}
+//createCompanyBySymbolJson();
+
+// Code to create JSON object from 3rd sheet of Excel file
+function createSymbolsByIndustryJson() {
+    const sheetName = workbook.SheetNames[2];
+    const obj = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName]);
+
     const finalArray = [];
 
     for (const key in obj) {
@@ -49,7 +80,8 @@ function iterate(obj) {
     });
 
 }
-//iterate(stocksJson)
+createSymbolsByIndustryJson();
+// End of code related to Excel file
 
 // 1. Get Today's date (The "To" date)
 const today = new Date();
@@ -159,4 +191,4 @@ async function getCompanyNews(ticker) {
     }));
 }
 
-module.exports = { keywords, addKeyword, removeKeyword, getGeneralNews, getCompanyNews, stocksJson };
+module.exports = { keywords, addKeyword, removeKeyword, getGeneralNews, getCompanyNews };
