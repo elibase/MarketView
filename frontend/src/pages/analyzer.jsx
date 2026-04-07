@@ -2,6 +2,79 @@ import "../assets/analyzer.css"
 
 export default function AnalyzerView(){
     return(
-        <h1>Analyzer View</h1>
-    )
+        <div class="container">
+            
+            {/* <!-- Main Content --> */}
+
+            <div class="main">
+
+                {/* <!-- Header --> */}
+
+                <div class="header">
+                    <h1>Stock Analyzer</h1>
+                </div>
+
+
+                    {/* <!-- Search --> */}
+
+                <div class="search">
+                    <input type="text" placeholder="Enter stock ticker (ex: TSLA)"/>
+                    <a class="btn analyze-btn" href="#">Analyze</a>
+                </div>
+
+
+                {/* <!-- Analysis Section --> */}
+
+                <div class="analysis-container">
+
+                    {/* <!-- Sentiment --> */}
+
+                    <div class="card sentiment">
+
+                        <div class="section-title">News Sentiment</div>
+
+                        <p><strong>Ticker:</strong> TSLA</p>
+                        <p><strong>Sentiment Score:</strong> +0.43</p>
+                        <p><strong>Sentiment Label:</strong> Positive</p>
+
+                    </div>
+
+
+                        {/* <!-- Report --> */}
+
+                    <div class="card report">
+
+                        <div class="section-title">Report</div>
+
+                        <p>
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                        Aenean commodo ligula eget dolor. Aenean massa.
+                        Cum sociis natoque penatibus et magnis dis parturient montes.
+                        Donec quam felis, ultricies nec, pellentesque eu, pretium quis.
+                        Nulla consequat massa quis enim.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                {/* <!-- Recent Articles --> */}
+
+                <div class="card articles">
+
+                    <div class="section-title">Recent News Articles</div>
+
+                    <ul>
+                        <li><a class="news-link" href="#">Tesla Stock Surges After Earnings</a></li>
+                        <li><a class="news-link" href="#">Analysts Warn About Model Y Production Delays</a></li>
+                        <li><a class="news-link" href="#">Tesla Announces New AI Initiative</a></li>
+                    </ul>
+
+                </div>
+
+            </div>
+
+        </div>
+    );
 }

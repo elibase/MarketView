@@ -11,6 +11,7 @@ export default function App() {
       <Layout>
         {/* All the routes will go below here */}
         <Routes>
+          <Route path='/' element={<DashboardView />} />
           <Route path='/home' element={<DashboardView />} />
           <Route path='/analyzer' element={<AnalyzerView />} />
           <Route path='/news' element={<NewsView />} />
