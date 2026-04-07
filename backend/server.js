@@ -1,21 +1,42 @@
 require("dotenv").config()
 const express = require('express')
 const cors = require('cors')
-const { getNews } = require('./services/newsService')
+const { keywords, addKeyword, removeKeyword, getGeneralNews, getCompanyNews } = require('./services/newsService')
 const app = express()
 const port = 3000
+
+
+app.use(express.json());
 
 app.use(cors({
     origin: 'http://localhost:5173'
 }));
 
 app.get('/', (req, res) => {
-  res.send('Hello World!')
+    res.send('Hello World!')
 })
 
 app.get('/api/message', (req, res) => {
     res.json({ message: "Hello from the Node server!" });
 });
+
+// NEWS API CALLS START
+app.post('/api/addKeyword', async (req, res) => {
+    const keywordToAdd = req.body.message;
+    const keywordWasAdded = await addKeyword(keywordToAdd, keywords);
+    res.json({ successful: keywordWasAdded });
+});
+
+app.post('/api/removeKeyword', async (req, res) => {
+    const keywordToRemove = req.body.message;
+    const keywordWasRemoved = await removeKeyword(keywordToRemove, keywords);
+    res.json({ successful: keywordWasRemoved });
+});
+
+app.post('/api/retrieveKeywords', async (req, res) => {
+    res.json({ message: keywords });
+});
+// NEWS API CALLS END
 
 app.get('/test-news', async (req, res) => {
     try {
@@ -39,13 +60,13 @@ app.get('/test-news', async (req, res) => {
 
     } catch (error) {
         console.error("Test Route Error:", error);
-        res.status(500).json({ 
-            error: "Failed to fetch news", 
-            message: error.message 
+        res.status(500).json({
+            error: "Failed to fetch news",
+            message: error.message
         });
     }
 });
 
 app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`)
+    console.log(`Example app listening on port ${port}`)
 })

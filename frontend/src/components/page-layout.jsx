@@ -6,7 +6,7 @@ export default function Layout ({ children }){
             <div class="sidebar">
                 <a href="/home">Home</a>
                 <a href="/stocks">Stocks</a>
-                <a href="/scraper">News</a>
+                <a href="/news">News</a>
                 <a href="/analyzer">Analyzer</a>
             </div>
             <main>

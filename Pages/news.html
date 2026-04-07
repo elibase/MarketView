@@ -1,53 +1,40 @@
-import "../assets/scraper.css"
-import React, { useEffect, useState } from 'react';
+<!DOCTYPE html>
+<html lang="en">
+<title>Financial News</title>
+<link rel="stylesheet" href="news.css">
 
-export default function ScraperView(){
-    const [data, setData] = useState("");
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
 
-    const callServer = async () => {
-        try {
-            const res = await fetch('http://localhost:3000/api/message');
-            const result = await res.json();
-            setData(result.message);
-        } catch (error) {
-            console.error("Error calling server: ", error)
-        }
-    }
+<body>
 
-    useEffect(() => {
-        console.log("Page loaded!");
-        myAutoFunction();
-    },    []);
+    <div class="container">
 
-    const myAutoFunction = () => {
+        <div class="sidebar">
+            <a href="../index.html">Home</a>
+            <a href="stocks.html">Stocks</a>
+            <a href="news.html">News</a>
+            <a href="analyzer.html">Analyzer</a>
+        </div>
 
-    };
-    
-    return(
         <div class="main">
-            <div>
-                <button onClick={callServer}>Call Node Server</button>
-                <p>Reponse: {data}</p>
-            </div>
+
             <div class="header">
-                <h1>Financial News Scraper</h1>
+                <h1>Financial News</h1>
             </div>
 
             <div class="grid-container">
                 <div class="grid-container-item">
-                    <form action="/submit-scraper-keyword" method="POST">
+                    <form action="/submit-news-keyword" method="POST">
                         <div class="search">
-                            <input
-                                id="scraper-keyword" 
-                                name="scraper-keyword"
-                                type="text" 
-                                placeholder="Enter Keyword..."
-                            />
+                            <input type="text" id="news-keyword" name="news-keyword"
+                                placeholder="Enter Keyword...">
                         </div>
                         <button class="btn" type="submit">Add Keyword</button>
                     </form>
                 </div>
-
                 <div class="grid-container-item">
                     <p>Keywords</p>
                     <div class="table-scroller">
@@ -57,7 +44,7 @@ export default function ScraperView(){
                                 <th></th>
                             </tr>
                             <tr>
-                                <form action="/remove-scraper-keyword" method="POST">
+                                <form action="/remove-news-keyword" method="POST">
                                     <td>AMZN</td>
                                     <td><button class="btn" type="submit">Remove</button></td>
                                 </form>
@@ -68,6 +55,7 @@ export default function ScraperView(){
 
                 <div class="column-span">
                     <button class="btn" id="gatherArticlesButton">Gather Articles</button>
+                    <hr>
                 </div>
 
                 <div class="column-span">
@@ -86,7 +74,7 @@ export default function ScraperView(){
 
 
 
-                                {/* 
+                                <!--
                                 <tr>
                                     <td>AMZN</td>
                                     <td><a
@@ -106,7 +94,7 @@ export default function ScraperView(){
                                     <td>March 13, 2026</td>
                                     <td><button class="btn">Analysis</button></td>
                                 </tr>
-                                */}
+                                -->
                             </tbody>
                         </table>
                     </div>
@@ -114,5 +102,8 @@ export default function ScraperView(){
                 </div>
             </div>
         </div>
-    )
-}
+    </div>
+    <script src="scripts/news.js" defer></script>
+</body>
+
+</html>

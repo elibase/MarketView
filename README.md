@@ -11,7 +11,7 @@
 ![Stocks Page](./img/StocksPage.png)
 
 ## News Page
-![Stocks Page](./img/NewsScraperPage.png)
+![Stocks Page](./img/NewsPage.png)
 
 ## Analyzer
 ![Analyzer](./img/AnalyzerPage.png)
