@@ -1,8 +1,7 @@
 require("dotenv").config()
 const express = require('express')
 const cors = require('cors')
-const { getGeneralNews, getCompanyNews } = require('./services/newsService')
-const { keywords, addKeyword, removeKeyword } = require('./services/scraperService')
+const { keywords, addKeyword, removeKeyword, getGeneralNews, getCompanyNews } = require('./services/newsService')
 const app = express()
 const port = 3000
 

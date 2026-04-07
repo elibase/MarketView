@@ -24,7 +24,7 @@ export default function DashboardView(){
             <div class="card">
                 <h3>News Feed</h3>
                 <p>Read the latest financial news related to tracked companies.</p>
-                <a class="btn" href="/scraper">View News</a>
+                <a class="btn" href="/news">View News</a>
             </div>
 
             <div class="card">

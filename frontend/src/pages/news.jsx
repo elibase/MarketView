@@ -1,7 +1,7 @@
-import "../assets/scraper.css"
+import "../assets/news.css"
 import React, { useEffect, useState } from 'react';
 
-export default function ScraperView() {
+export default function NewsView() {
     const [refresh, setRefresh] = useState(0);
     const [data, setData] = useState("");
     const [keyword, setKeyword] = useState("");
@@ -97,7 +97,7 @@ export default function ScraperView() {
     return (
         <div class="main">
             <div class="header">
-                <h1>Financial News Scraper</h1>
+                <h1>Financial News</h1>
             </div>
             <div class="grid-container">
                 <div class="grid-container-item">
@@ -130,7 +130,7 @@ export default function ScraperView() {
                                 <th></th>
                             </tr>
                             <tr>
-                                <form action="/remove-scraper-keyword" method="POST">
+                                <form action="/remove-news-keyword" method="POST">
                                     <td>AMZN</td>
                                     <td><button class="btn" type="submit">Remove</button></td>
                                 </form>

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
-<title>Financial News Scraper</title>
-<link rel="stylesheet" href="scraper.css">
+<title>Financial News</title>
+<link rel="stylesheet" href="news.css">
 
 <head>
     <meta charset="UTF-8">
@@ -15,21 +15,21 @@
         <div class="sidebar">
             <a href="../index.html">Home</a>
             <a href="stocks.html">Stocks</a>
-            <a href="scraper.html">News</a>
+            <a href="news.html">News</a>
             <a href="analyzer.html">Analyzer</a>
         </div>
 
         <div class="main">
 
             <div class="header">
-                <h1>Financial News Scraper</h1>
+                <h1>Financial News</h1>
             </div>
 
             <div class="grid-container">
                 <div class="grid-container-item">
-                    <form action="/submit-scraper-keyword" method="POST">
+                    <form action="/submit-news-keyword" method="POST">
                         <div class="search">
-                            <input type="text" id="scraper-keyword" name="scraper-keyword"
+                            <input type="text" id="news-keyword" name="news-keyword"
                                 placeholder="Enter Keyword...">
                         </div>
                         <button class="btn" type="submit">Add Keyword</button>
@@ -44,7 +44,7 @@
                                 <th></th>
                             </tr>
                             <tr>
-                                <form action="/remove-scraper-keyword" method="POST">
+                                <form action="/remove-news-keyword" method="POST">
                                     <td>AMZN</td>
                                     <td><button class="btn" type="submit">Remove</button></td>
                                 </form>
@@ -103,7 +103,7 @@
             </div>
         </div>
     </div>
-    <script src="scripts/scraper.js" defer></script>
+    <script src="scripts/news.js" defer></script>
 </body>
 
 </html>
