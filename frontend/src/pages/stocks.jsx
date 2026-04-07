@@ -1,6 +1,7 @@
 import "../assets/stocks.css"
 
 export default function StocksView(){
+
     return(
         <div class="main">
 

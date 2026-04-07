@@ -13,15 +13,15 @@ export default function ScraperView(){
             console.error("Error calling server: ", error)
         }
     }
+    
+    const myAutoFunction = () => {
+
+    };
 
     useEffect(() => {
         console.log("Page loaded!");
         myAutoFunction();
     },    []);
-
-    const myAutoFunction = () => {
-
-    };
     
     return(
         <div class="main">
