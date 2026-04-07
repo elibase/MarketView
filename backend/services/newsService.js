@@ -3,6 +3,54 @@ const axios = require("axios");
 const keywords = ["Amazon", "AMZN", "Google", "GOOG", "Tesla", "TSLA"] // Hardcoded
 const API_KEY = process.env.API_KEY;
 
+
+// Converting Excel to JSON
+const XLSX = require('xlsx');
+const workbook = XLSX.readFile('./data/stocks-list.xlsx');
+const sheetName = workbook.SheetNames[2];
+const stocksJson = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName]);
+
+// Code to create JSON object from 3rd sheet of Excel file
+function iterate(obj) {
+    const finalArray = [];
+
+    for (const key in obj) {
+        var industry = "";
+        const array = [];
+
+        if (obj.hasOwnProperty(key)) {
+            const line = obj[key];
+            for (const key2 in line) {
+                if (line.hasOwnProperty(key2)) {
+                    if (key2 === "Industry") {
+                        industry = line[key2];
+                    } else {
+                        array.push(line[key2]);
+                    }
+                }
+            }
+        }
+
+        const newObj = { "industry": industry, symbols: array };
+        finalArray.push(newObj);
+    }
+
+    const fs = require('fs');
+    // 1. Convert object to JSON string (with 2-space indentation)
+    const jsonData = JSON.stringify(finalArray, null, 2);
+
+    // 2. Write to file
+    fs.writeFile('./data/symbols-by-industry.json', jsonData, 'utf8', (err) => {
+        if (err) {
+            console.error("An error occurred while writing JSON Object to File.", err);
+            return;
+        }
+        console.log("JSON file has been saved.");
+    });
+
+}
+//iterate(stocksJson)
+
 // 1. Get Today's date (The "To" date)
 const today = new Date();
 const toDate = today.toISOString().split('T')[0];
@@ -111,4 +159,4 @@ async function getCompanyNews(ticker) {
     }));
 }
 
-module.exports = { keywords, addKeyword, removeKeyword, getGeneralNews, getCompanyNews };
+module.exports = { keywords, addKeyword, removeKeyword, getGeneralNews, getCompanyNews, stocksJson };
