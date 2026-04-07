@@ -36,6 +36,11 @@ app.post('/api/removeKeyword', async (req, res) => {
 app.post('/api/retrieveKeywords', async (req, res) => {
     res.json({ message: keywords });
 });
+
+app.post('/api/getArticles', async (req, res) => {
+    const articles = await getCompanyNews("GOOG");
+    res.json({ message: articles });
+});
 // NEWS API CALLS END
 
 app.get('/test-news', async (req, res) => {
