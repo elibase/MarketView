@@ -12,7 +12,28 @@ const thirtyDaysAgo = new Date();
 thirtyDaysAgo.setDate(today.getDate() - 30);
 const fromDate = thirtyDaysAgo.toISOString().split('T')[0];
 
+async function addKeyword(newKeyword, keywordArray) {
+    // Assumes that newKeyword is simply a string consisting of a word.
+    const keywordIsNew = !(keywordArray.includes(newKeyword));
+    if (keywordIsNew) {
+        keywordArray.push(newKeyword)
+        return true;
+    } else {
+        return false;
+    }
+}
 
+async function removeKeyword(keywordToRemove, keywordArray) {
+    // Assumes that keywordToRemove is simply a string consisting of a word.
+    const index = keywordArray.indexOf(keywordToRemove);
+
+    if (index > -1) {
+        keywordArray.splice(index, 1);
+        return true;
+    } else {
+        return false;
+    }
+}
 
 async function getGeneralNews() {
     /*
@@ -61,29 +82,4 @@ async function getCompanyNews(ticker) {
     }));
 }
 
-
-
-async function addKeyword(newKeyword, keywordArray) {
-    // Assumes that newKeyword is simply a string consisting of a word.
-    const keywordIsNew = !(keywordArray.includes(newKeyword));
-    if (keywordIsNew) {
-        keywordArray.push(newKeyword)
-        return true;
-    } else {
-        return false;
-    }
-}
-
-async function removeKeyword(keywordToRemove, keywordArray) {
-    // Assumes that keywordToRemove is simply a string consisting of a word.
-    const index = keywordArray.indexOf(keywordToRemove);
-
-    if (index > -1) {
-        keywordArray.splice(index, 1);
-        return true;
-    } else {
-        return false;
-    }
-}
-
-module.exports = { keywords, addKeyword, removeKeyword };
+module.exports = { keywords, addKeyword, removeKeyword, getGeneralNews, getCompanyNews };
