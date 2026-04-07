@@ -1,7 +1,7 @@
 require("dotenv").config()
 const express = require('express')
 const cors = require('cors')
-const { keywords, addKeyword, removeKeyword, getGeneralNews, getCompanyNews, stocksJson } = require('./services/newsService')
+const { keywords, addKeyword, removeKeyword, getGeneralNews, getCompanyNews } = require('./services/newsService')
 const app = express()
 const port = 3000
 
@@ -38,8 +38,8 @@ app.post('/api/retrieveKeywords', async (req, res) => {
 });
 
 app.post('/api/getArticles', async (req, res) => {
-    //const articles = await getCompanyNews("GOOG");
-    const articles = stocksJson;
+    const articles = await getCompanyNews("GOOG");
+    //const articles = stocksJson;
     res.json({ message: articles });
 });
 // NEWS API CALLS END
