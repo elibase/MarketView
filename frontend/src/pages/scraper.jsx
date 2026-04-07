@@ -8,16 +8,6 @@ export default function ScraperView() {
     const [keywords, setKeywords] = useState([""]);
     const [articles, setArticles] = useState("");
 
-    const demoCallServer = async () => { // Demo
-        try {
-            const res = await fetch('http://localhost:3000/api/message');
-            const result = await res.json();
-            setData(result.message);
-        } catch (error) {
-            console.error("Error calling server: ", error)
-        }
-    }
-
     const handleRetrieveKeywords = async (event) => {
         try {
             const response = await fetch('http://localhost:3000/api/retrieveKeywords', {
@@ -97,25 +87,6 @@ export default function ScraperView() {
         );
     }
 
-    const handleSubmit = async (event) => { // Demo
-        event.preventDefault();
-        const exampleKeywords = ["AMZN", "Amazon"];
-
-        try {
-            const response = await fetch('http://localhost:3000/api/data', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(exampleKeywords) // Your parameters
-            });
-            const result = await response.json();
-            console.log(result)
-            setArticles(result.kwl)
-        } catch (error) {
-            console.error("Error calling server: ", error)
-        }
-
-    }
-
     useEffect(() => {
         console.log("Page loaded!");
         handleRetrieveKeywords();
@@ -125,15 +96,6 @@ export default function ScraperView() {
 
     return (
         <div class="main">
-            <div>
-                <button onClick={demoCallServer}>Call Node Server</button>
-                <p>Response: {data}</p>
-            </div>
-
-            <div>
-                <button onClick={handleSubmit}>Call Node Server 2</button>
-                <p>Response: {articles}</p>
-            </div>
             <div class="header">
                 <h1>Financial News Scraper</h1>
             </div>
