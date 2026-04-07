@@ -8,7 +8,7 @@ export default function ScraperView() {
     const [keywords, setKeywords] = useState([""]);
     const [articles, setArticles] = useState("");
 
-    const demoCallServer = async () => {
+    const demoCallServer = async () => { // Demo
         try {
             const res = await fetch('http://localhost:3000/api/message');
             const result = await res.json();
@@ -100,7 +100,7 @@ export default function ScraperView() {
         );
     }
 
-    const handleSubmit = async (event) => {
+    const handleSubmit = async (event) => { // Demo
         event.preventDefault();
         const exampleKeywords = ["AMZN", "Amazon"];
 

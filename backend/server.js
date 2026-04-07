@@ -2,9 +2,10 @@ require("dotenv").config()
 const express = require('express')
 const cors = require('cors')
 const { getNews } = require('./services/newsService')
+const { keywords } = require('./services/scraperService')
 const app = express()
 const port = 3000
-const keywords = ["Amazon", "AMZN", "Google", "GOOG", "Tesla", "TSLA"] // Hardcoded
+
 
 app.use(express.json());
 
@@ -20,36 +21,19 @@ app.get('/api/message', (req, res) => {
     res.json({ message: "Hello from the Node server!" });
 });
 
-// START OF SCRAPER API CALLS
+// SCRAPER API CALLS START
 app.post('/api/addKeyword', (req, res) => {
-    const newKeyword = req.body;
-    //res.json({successful: newKeyword})
 
-    const keywordIsNew = !(keywords.includes(newKeyword.message));
-    if (keywordIsNew) {
-        keywords.push(newKeyword.message)
-        res.json({ successful: "true" });
-    } else {
-        res.json({ successful: "false" });
-    }
 });
 
 app.post('/api/removeKeyword', (req, res) => {
-    const keywordToRemove = req.body.message;
-    const index = keywords.indexOf(keywordToRemove);
 
-    if (index > -1) {
-        keywords.splice(index, 1);
-        res.json({ successful: "true" });
-    } else {
-        res.json({ successful: "false" });
-    }
 });
 
 app.post('/api/retrieveKeywords', (req, res) => {
-    res.json({ message: keywords });
+    
 });
-// END OF SCRAPER API CALLS
+// SCRAPER API CALLS END
 
 app.get('/test-news', async (req, res) => {
     try {
