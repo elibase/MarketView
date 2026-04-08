@@ -1,7 +1,7 @@
 require("dotenv").config()
 const express = require('express')
 const cors = require('cors')
-const { keywords, addKeyword, removeKeyword, getMarketNews, getCompanyNews, getStockInfo, filterArticles } = require('./services/newsService')
+const { keywords, addKeyword, removeKeyword, getCompanyNews } = require('./services/newsService')
 const app = express()
 const port = 3000
 
@@ -22,26 +22,55 @@ app.get('/api/message', (req, res) => {
 
 // NEWS API CALLS START
 app.post('/api/addKeyword', async (req, res) => {
-    const keywordToAdd = req.body.message;
-    const keywordWasAdded = await addKeyword(keywordToAdd, keywords);
-    res.json({ successful: keywordWasAdded });
+    try {
+        const keywordToAdd = req.body.message;
+        const keywordWasAdded = await addKeyword(keywordToAdd, keywords);
+        res.json({ successful: keywordWasAdded });
+    } catch {
+        res.status(500).json({
+            error: "Failed to add symbol",
+            message: error.message
+        });
+    }
 });
 
 app.post('/api/removeKeyword', async (req, res) => {
-    const keywordToRemove = req.body.message;
-    const keywordWasRemoved = await removeKeyword(keywordToRemove, keywords);
-    res.json({ successful: keywordWasRemoved });
+    try {
+        const keywordToRemove = req.body.message;
+        const keywordWasRemoved = await removeKeyword(keywordToRemove, keywords);
+        res.json({ successful: keywordWasRemoved });
+    } catch {
+        res.status(500).json({
+            error: "Failed to remove symbol",
+            message: error.message
+        });
+    }
+
 });
 
 app.post('/api/retrieveKeywords', async (req, res) => {
-    res.json({ message: keywords });
+    try {
+        res.json({ message: keywords });
+    } catch {
+        res.status(500).json({
+            error: "Failed to fetch symbols",
+            message: error.message
+        });
+    }
 });
 
 app.post('/api/getArticles', async (req, res) => {
-    const stockSymbol = req.body.message;
-    const companyArticlesPromise = await getCompanyNews(stockSymbol);
-    const companyArticles = Object.values(companyArticlesPromise)[1];
-    res.json({ message: companyArticles });
+    try {
+        const stockSymbol = req.body.message;
+        const companyArticlesPromise = await getCompanyNews(stockSymbol);
+        const companyArticles = Object.values(companyArticlesPromise)[1];
+        res.json({ message: companyArticles });
+    } catch {
+        res.status(500).json({
+            error: "Failed to fetch articles",
+            message: error.message
+        });
+    }
 });
 // NEWS API CALLS END
 

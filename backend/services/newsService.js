@@ -379,4 +379,4 @@ async function getCompanyNews(symbol) {
 
 }
 
-module.exports = { keywords, addKeyword, removeKeyword, getMarketNews, getCompanyNews, getStockInfo, filterArticles };
+module.exports = { keywords, addKeyword, removeKeyword, getCompanyNews };
