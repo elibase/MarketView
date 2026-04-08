@@ -39,8 +39,32 @@ export default function NewsView() {
         }
     }
 
+    const addKeyword = async (keywordToAdd) => {
+        event.preventDefault();
+
+        if (keywordToAdd) {
+            try {
+                const response = await fetch('http://localhost:3000/api/addKeyword', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message: keywordToAdd }) // Your parameters
+                });
+                const result = await response.json();
+                console.log("Adding keyword was successful: ", result.successful);
+                if (result.successful) {
+                    setKeywords([...keywords, keywordToAdd])
+                }
+                setRefresh(prev => prev + 1);
+
+            } catch (error) {
+                console.error("Error calling server: ", error)
+            }
+        }
+    }
+
     const handleAddKeyword = async (event) => {
         event.preventDefault();
+        console.log(event);
 
         if (keyword) {
             try {
@@ -181,7 +205,8 @@ export default function NewsView() {
 
             <div class="grid-container">
                 <div class="grid-container-item">
-                    <form onSubmit={handleAddKeyword}>
+                    {/* <form onSubmit={handleAddKeyword}> */}
+                    <form>
                         <div class="search">
                             <input
                                 id="keyword"
@@ -192,7 +217,7 @@ export default function NewsView() {
                                 placeholder="Enter Keyword..."
                             />
                         </div>
-                        <button class="btn" type="submit">Add Keyword</button>
+                        <button class="btn" onClick={() => addKeyword(keyword)}>Add Keyword</button>
                     </form>
                 </div>
 
