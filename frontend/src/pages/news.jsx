@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 export default function NewsView() {
     const [refresh, setRefresh] = useState(0);
     const [data, setData] = useState("");
-    const [keyword, setKeyword] = useState("");
+    const [keywordLabel, setKeywordLabel] = useState("");
     const [keywords, setKeywords] = useState([""]);
     //const [articles, setArticles] = useState("");
     const [RealArticles, setRealArticles] = useState([]);
@@ -40,6 +40,7 @@ export default function NewsView() {
     }
 
     const addKeyword = async (keywordToAdd) => {
+        event.preventDefault();
         if (keywordToAdd) {
             try {
                 const response = await fetch('http://localhost:3000/api/addKeyword', {
@@ -183,15 +184,15 @@ export default function NewsView() {
                     <form>
                         <div class="search">
                             <input
-                                id="keyword"
+                                id="keywordLabel"
                                 type="text"
-                                value={keyword}
-                                onChange={(e) => setKeyword(e.target.value)}
+                                value={keywordLabel}
+                                onChange={(e) => setKeywordLabel(e.target.value)}
                                 autoComplete="off"
                                 placeholder="Enter Keyword..."
                             />
                         </div>
-                        <button class="btn" onClick={() => addKeyword(keyword)}>Add Keyword</button>
+                        <button class="btn" onClick={() => addKeyword(keywordLabel)}>Add Keyword</button>
                     </form>
                 </div>
 
