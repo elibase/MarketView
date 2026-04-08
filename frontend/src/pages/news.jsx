@@ -32,15 +32,16 @@ export default function NewsView() {
                 headers: { 'Content-Type': 'application/json' }
             });
             const result = await response.json();
-            console.log("Keywords retrieved: ", result.message);
-            setKeywords(result.message);
+            const retrievedKeywords = result.message.sort();
+            console.log("Keywords retrieved: ", retrievedKeywords);
+            setKeywords(retrievedKeywords);
         } catch (error) {
             console.error("Error calling server: ", error)
         }
     }
 
     const addKeyword = async (keywordToAdd) => {
-        event.preventDefault();
+        event.preventDefault(); // Needed to prevent page reload.
         if (keywordToAdd) {
             try {
                 const response = await fetch('http://localhost:3000/api/addKeyword', {
@@ -51,7 +52,7 @@ export default function NewsView() {
                 const result = await response.json();
                 console.log("Adding keyword was successful: ", result.successful);
                 if (result.successful) {
-                    setKeywords([...keywords, keywordToAdd])
+                    setKeywords([...keywords, keywordToAdd].sort());
                 }
                 setRefresh(prev => prev + 1);
 
@@ -86,8 +87,8 @@ export default function NewsView() {
                     const result = await response.json();
                     console.log("Removal of keyword was successful: ", result.successful)
                     if (result.successful) {
-                        const updatedKeywords = keywords.filter(keyword => keyword !== keywordName);
-                        setKeywords(updatedKeywords)
+                        const updatedKeywords = keywords.filter(keyword => keyword !== keywordName).sort();
+                        setKeywords(updatedKeywords);
                     }
                     setRefresh(prev => prev + 1);
                 } catch (error) {
@@ -105,12 +106,19 @@ export default function NewsView() {
                     </tr>
                 </thead>
                 <tbody>
-                    {keywords.map((keyword) => (
-                        <tr key={keyword}>
-                            <td>{keyword}</td>
-                            <td><button onClick={() => removeKeyword(keyword)}>Remove</button></td>
+                    {keywords.length > 0 ? (
+                        keywords.map((keyword) => (
+                            <tr key={keyword}>
+                                <td>{keyword}</td>
+                                <td><button onClick={() => removeKeyword(keyword)}>Remove</button></td>
+                            </tr>
+                        ))
+                    ) : (
+                        <tr>
+                            <td>No keywords found!</td>
+                            <td>Add some!</td>
                         </tr>
-                    ))}
+                    )}
                 </tbody>
             </table>
         );
