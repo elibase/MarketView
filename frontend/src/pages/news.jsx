@@ -40,8 +40,6 @@ export default function NewsView() {
     }
 
     const addKeyword = async (keywordToAdd) => {
-        event.preventDefault();
-
         if (keywordToAdd) {
             try {
                 const response = await fetch('http://localhost:3000/api/addKeyword', {
@@ -53,30 +51,6 @@ export default function NewsView() {
                 console.log("Adding keyword was successful: ", result.successful);
                 if (result.successful) {
                     setKeywords([...keywords, keywordToAdd])
-                }
-                setRefresh(prev => prev + 1);
-
-            } catch (error) {
-                console.error("Error calling server: ", error)
-            }
-        }
-    }
-
-    const handleAddKeyword = async (event) => {
-        event.preventDefault();
-        console.log(event);
-
-        if (keyword) {
-            try {
-                const response = await fetch('http://localhost:3000/api/addKeyword', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ message: keyword }) // Your parameters
-                });
-                const result = await response.json();
-                console.log("Adding keyword was successful: ", result.successful);
-                if (result.successful) {
-                    setKeywords([...keywords, keyword])
                 }
                 setRefresh(prev => prev + 1);
 
@@ -100,7 +74,7 @@ export default function NewsView() {
     }
 
     function KeywordTable() {
-        const handleRemoveKeyword = async (keywordName) => {
+        const removeKeyword = async (keywordName) => {
             if (keywordName) {
                 try {
                     const response = await fetch('http://localhost:3000/api/removeKeyword', {
@@ -133,7 +107,7 @@ export default function NewsView() {
                     {keywords.map((keyword) => (
                         <tr key={keyword}>
                             <td>{keyword}</td>
-                            <td><button onClick={() => handleRemoveKeyword(keyword)}>Remove</button></td>
+                            <td><button onClick={() => removeKeyword(keyword)}>Remove</button></td>
                         </tr>
                     ))}
                 </tbody>
