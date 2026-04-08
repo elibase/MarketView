@@ -3,27 +3,12 @@ import React, { useEffect, useState } from 'react';
 
 export default function NewsView() {
     const [refresh, setRefresh] = useState(0);
-    const [data, setData] = useState("");
-    const [keywordLabel, setKeywordLabel] = useState("");
+    const [symbols, setSymbols] = useState([]);
+    const [suggestions, setSuggestions] = useState([]);
+    const [filtered, setFiltered] = useState([]);
+    const [input, setInput] = useState("");
     const [keywords, setKeywords] = useState([""]);
-    //const [articles, setArticles] = useState("");
-    const [RealArticles, setRealArticles] = useState([]);
-    const articles = [
-        {
-            keyword: "AMZN",
-            url: "https://www.bloomberg.com/news/articles/2026-03-12/amazon-plans-to-shift-annual-prime-day-sale-to-june-from-july",
-            headline: "Amazon Plans to Shift Annual Prime Day Sale to June From July",
-            source: "Bloomberg",
-            datetime: "March 12, 2026"
-        },
-        {
-            keyword: "AMZN",
-            url: "https://www.cnet.com/tech/services-and-software/amazon-to-increase-the-price-of-ad-free-prime-video-streaming",
-            headline: "Amazon to Increase the Price of Ad-Free Prime Video Streaming",
-            source: "CNET",
-            datetime: "March 13, 2026"
-        }
-    ];
+    const [articles, setArticles] = useState([]);
 
     const handleRetrieveKeywords = async (event) => {
         try {
@@ -33,15 +18,19 @@ export default function NewsView() {
             });
             const result = await response.json();
             const retrievedKeywords = result.message.sort();
-            console.log("Keywords retrieved: ", retrievedKeywords);
+            //console.log("Keywords retrieved: ", retrievedKeywords);
             setKeywords(retrievedKeywords);
         } catch (error) {
             console.error("Error calling server: ", error)
         }
-    }
+    };
 
-    const addKeyword = async (keywordToAdd) => {
+    const addKeyword = async (enteredInput) => {
         event.preventDefault(); // Needed to prevent page reload.
+
+        const inputInSuggestions = suggestions.includes(enteredInput);
+
+        const keywordToAdd = enteredInput.split("-").map(identifier => identifier.trim())[0].toUpperCase();
         if (keywordToAdd) {
             try {
                 const response = await fetch('http://localhost:3000/api/addKeyword', {
@@ -50,7 +39,7 @@ export default function NewsView() {
                     body: JSON.stringify({ message: keywordToAdd }) // Your parameters
                 });
                 const result = await response.json();
-                console.log("Adding keyword was successful: ", result.successful);
+                //console.log("Adding keyword was successful: ", result.successful);
                 if (result.successful) {
                     setKeywords([...keywords, keywordToAdd].sort());
                 }
@@ -60,20 +49,37 @@ export default function NewsView() {
                 console.error("Error calling server: ", error)
             }
         }
-    }
+    };
 
-    const handleGetArticles = async (event) => {
+    const getArticles = async (articleKeyword) => {
         try {
             const response = await fetch('http://localhost:3000/api/getArticles', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' }
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message: articleKeyword }) // Your parameters
             });
             const result = await response.json();
-            console.log("Articles retrieved: ", result.message);
+            //console.log("Articles received: ", result.message);
+            setArticles(result.message);
         } catch (error) {
             console.error("Error calling server: ", error)
         }
-    }
+    };
+
+    const handleInputChange = (e) => {
+        const value = e.target.value;
+        setInput(value);
+
+        if (value.length > 0) {
+            //const regex = new RegExp(`^${value}`, 'i');
+            const regex = new RegExp(value, 'i');
+            setFiltered(suggestions.filter(v => regex.test(v)));
+        } else {
+            setFiltered([]);
+        }
+    };
+
+
 
     function KeywordTable() {
         const removeKeyword = async (keywordName) => {
@@ -103,6 +109,7 @@ export default function NewsView() {
                     <tr>
                         <th></th>
                         <th></th>
+                        <th></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -110,7 +117,8 @@ export default function NewsView() {
                         keywords.map((keyword) => (
                             <tr key={keyword}>
                                 <td>{keyword}</td>
-                                <td><button onClick={() => removeKeyword(keyword)}>Remove</button></td>
+                                <td><button class="btn" onClick={() => getArticles(keyword)}>Gather Articles</button></td>
+                                <td><button class="btn" onClick={() => removeKeyword(keyword)}>Remove</button></td>
                             </tr>
                         ))
                     ) : (
@@ -122,48 +130,54 @@ export default function NewsView() {
                 </tbody>
             </table>
         );
-    }
+    };
 
     function ArticleTable() {
-        const handleArticleAnalysis = async (keywordName) => { // Placeholder, not coded nor implemented yet
-            if (keywordName) {
-                try {
-                    const response = await fetch('http://localhost:3000/api/removeKeyword', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ message: keywordName }) // Your parameters
-                    });
-                    const result = await response.json();
-                    console.log("Removal of keyword was successful: ", result.successful)
-                    if (result.successful) {
-                        const updatedKeywords = keywords.filter(keyword => keyword !== keywordName);
-                        setKeywords(updatedKeywords)
+        const [sortConfig, setSortConfig] = useState({ key: 'name', direction: 'ascending' });
+
+        // Sorting logic
+        const sortedData = React.useMemo(() => {
+            let sortableItems = [...articles];
+            if (sortConfig !== null) {
+                sortableItems.sort((a, b) => {
+                    if (a[sortConfig.key] < b[sortConfig.key]) {
+                        return sortConfig.direction === 'ascending' ? -1 : 1;
                     }
-                    setRefresh(prev => prev + 1);
-                } catch (error) {
-                    console.error("Error calling server: ", error)
-                }
+                    if (a[sortConfig.key] > b[sortConfig.key]) {
+                        return sortConfig.direction === 'ascending' ? 1 : -1;
+                    }
+                    return 0;
+                });
             }
-        }
+            return sortableItems;
+        }, [articles, sortConfig]);
+
+        // Request sort function
+        const requestSort = (key) => {
+            let direction = 'ascending';
+            if (sortConfig.key === key && sortConfig.direction === 'ascending') {
+                direction = 'descending';
+            }
+            setSortConfig({ key, direction });
+        };
 
         return (
-            <table class="article-table">
+            <table>
                 <thead>
                     <tr>
-                        <th>Keyword</th>
-                        <th>Article</th>
-                        <th>Source</th>
-                        <th>Date</th>
+                        {/* Form controls (buttons) within headers */}
+                        <th onClick={() => requestSort('headline')}>Headline {sortConfig.key === 'headline' ? (sortConfig.direction === 'ascending' ? '▲' : '▼') : ''}</th>
+                        <th onClick={() => requestSort('source')}>Source {sortConfig.key === 'source' ? (sortConfig.direction === 'ascending' ? '▲' : '▼') : ''}</th>
+                        <th onClick={() => requestSort('datetime')}>Date {sortConfig.key === 'datetime' ? (sortConfig.direction === 'ascending' ? '▲' : '▼') : ''}</th>
                         <th></th>
                     </tr>
                 </thead>
-                <tbody id="articleTableBody">
-                    {articles.map((article) => (
+                <tbody>
+                    {sortedData.map(article => (
                         <tr key={article.url}>
-                            <td>{article.keyword}</td>
                             <td><a href={article.url}>{article.headline}</a></td>
                             <td>{article.source}</td>
-                            <td>{article.datetime}</td>
+                            <td>{article.readableDatetime}</td>
                             <td><button class="btn">Analysis</button></td>
                             {/* <td><button onClick={() => handleArticleAnalysis(articleParameter)}>Analysis</button></td> */}
                         </tr>
@@ -171,18 +185,26 @@ export default function NewsView() {
                 </tbody>
             </table>
         );
-    }
+    };
+
 
     useEffect(() => {
         console.log("Page loaded!");
-        handleRetrieveKeywords();
+        handleRetrieveKeywords(); // Retrieve any articles from server (in theory it would use user ID, in practice it retrieves a hardcoded list)
+
+        fetch('../../suggestions.txt') // Ensure file is in the public folder
+            .then(response => response.text())
+            .then(text => {
+                // Split by newline and remove empty strings
+                const lines = text.split('\n').filter(line => line.trim() !== "").map(line => line.substring(0, line.length-2));
+                setSuggestions(lines);
+            });
     }, []);
 
-
     let keywordSubtitle;
-    if (keywords.length === 0) keywordSubtitle = "0 Keywords";
-    else if (keywords.length === 1) keywordSubtitle = "1 Keyword";
-    else keywordSubtitle = `${keywords.length} Keywords`;
+    if (keywords.length === 0) keywordSubtitle = "0 Symbols";
+    else if (keywords.length === 1) keywordSubtitle = "1 Symbol";
+    else keywordSubtitle = `${keywords.length} Symbols`;
 
     return (
         <div class="main">
@@ -196,15 +218,20 @@ export default function NewsView() {
                     <form>
                         <div class="search">
                             <input
-                                id="keywordLabel"
+                                id="input"
                                 type="text"
-                                value={keywordLabel}
-                                onChange={(e) => setKeywordLabel(e.target.value)}
-                                autoComplete="off"
+                                value={input}
+                                onChange={handleInputChange}
+                                list="suggestions"
                                 placeholder="Enter Keyword..."
                             />
+                            <datalist id="suggestions">
+                                {filtered.map((item, index) => (
+                                    <option key={index} value={item} />
+                                ))}
+                            </datalist>
                         </div>
-                        <button class="btn" onClick={() => addKeyword(keywordLabel)}>Add Keyword</button>
+                        <button class="btn" onClick={() => addKeyword(input)}>Add Symbol</button>
                     </form>
                 </div>
 
@@ -215,13 +242,15 @@ export default function NewsView() {
                     </div>
                 </div>
 
-                <div class="column-span">
+                {/*<div class="column-span">
                     <button class="btn" id="gatherArticlesButton" onClick={handleGetArticles}>Gather Articles</button>
-                </div>
+                </div>*/}
+
+
 
                 <div class="column-span">
-                    <div class="table-scroller">
-                        {ArticleTable()}
+                    <div class="article-table-scroller">
+                        <div>{ArticleTable()}</div>
                     </div>
                 </div>
 

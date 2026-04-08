@@ -1,14 +1,17 @@
 require('dotenv').config();
 const axios = require("axios");
-const keywords = ["Amazon", "AMZN", "Google", "GOOG", "Tesla", "TSLA"] // Hardcoded
 const API_KEY = process.env.API_KEY;
+const keywords = ["AMZN", "GOOG", "TSLA"] // Hardcoded
 
 
-// Converting Excel to JSON
+const companyBySymbol = require("../data/company-by-symbol.json");
+const symbolsByIndustry = require('../data/symbols-by-industry.json');
+const stocksInformation = require('../data/stocks-information.json');
+// Code related to Excel file
 const XLSX = require('xlsx');
 const workbook = XLSX.readFile('./data/stocks-list.xlsx');
 
-// Code to create JSON object from 3rd sheet of Excel file
+// Code to create JSON object from 1st sheet of Excel file
 function createCompanyBySymbolJson() {
     const sheetName = workbook.SheetNames[0];
     const obj = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName]);
@@ -17,7 +20,7 @@ function createCompanyBySymbolJson() {
     for (const key in obj) {
         if (obj.hasOwnProperty(key)) {
             const line = obj[key];
-            const newObj = { "symbol": line.Symbol, "company": line["Company Name"] };
+            const newObj = { "symbol": line.Symbol, "company": line["Company Name"], "both": line.Symbol.concat(" - ", line["Company Name"]) };
             finalArray.push(newObj);
         }
     }
@@ -34,9 +37,39 @@ function createCompanyBySymbolJson() {
         }
         console.log("JSON file has been saved.");
     });
-    
+
 }
 //createCompanyBySymbolJson();
+
+// Code to create JSON object from 1rd sheet of Excel file
+function createStocksInformationJson() {
+    const sheetName = workbook.SheetNames[0];
+    const obj = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName]);
+    const finalArray = [];
+
+    for (const key in obj) {
+        if (obj.hasOwnProperty(key)) {
+            const line = obj[key];
+            const newObj = { "symbol": line.Symbol, "company": line["Company Name"], "industry": line.Industry };
+            finalArray.push(newObj);
+        }
+    }
+
+    const fs = require('fs');
+    // 1. Convert object to JSON string (with 2-space indentation)
+    const jsonData = JSON.stringify(finalArray, null, 2);
+
+    // 2. Write to file
+    fs.writeFile('./data/stocks-information.json', jsonData, 'utf8', (err) => {
+        if (err) {
+            console.error("An error occurred while writing JSON Object to File.", err);
+            return;
+        }
+        console.log("JSON file has been saved.");
+    });
+
+}
+//createStocksInformationJson();
 
 // Code to create JSON object from 3rd sheet of Excel file
 function createSymbolsByIndustryJson() {
@@ -80,8 +113,10 @@ function createSymbolsByIndustryJson() {
     });
 
 }
-createSymbolsByIndustryJson();
+//createSymbolsByIndustryJson();
 // End of code related to Excel file
+
+
 
 // 1. Get Today's date (The "To" date)
 const today = new Date();
@@ -107,8 +142,70 @@ function formatUnixDatetime(datetime) {
     return readable; // Output: "Monday, May 20, 2024"
 }
 
-async function tickerMapper(string) {
+async function filterByCompanyOrSymbol(stringObj, objType) {
+    var filter = "";
 
+    if (objType.toLowerCase() === "symbol") {
+        filter = (arr, symbol) => arr.filter(entity => entity["symbol"].toUpperCase() === symbol.toUpperCase());
+    } else if (objType.toLowerCase() === "company") {
+        filter = (arr, company) => arr.filter(entity => entity["company"].toLowerCase() === company.toLowerCase());
+    }
+
+    var entity = filter(stocksInformation, stringObj)[0];
+    return entity;
+}
+
+async function filterByIndustry(industry, returnObjType) {
+    var filter = (arr, industry) => arr.filter(object => object["industry"].toLowerCase() === industry.toLowerCase());
+    var filteredArray = filter(stocksInformation, industry);
+    const finalArray = [];
+    returnObjType = returnObjType.toLowerCase();
+    if (returnObjType === "symbol" || returnObjType === "company" || returnObjType === "both") {
+        filteredArray.forEach((item) => {
+            const finalItem = {};
+            if (returnObjType === "symbol") {
+                finalArray.push(item.symbol);
+            } else if (returnObjType === "company") {
+                finalArray.push(item.company);
+            } else if (returnObjType === "both") {
+                finalItem.symbol = item.symbol;
+                finalItem.company = item.company;
+                finalArray.push(finalItem);
+            }
+        });
+        return finalArray;
+    } else {
+        return filteredArray;
+    }
+}
+
+async function getStockInfo(stringObj) {
+    const symbolArgument = filterByCompanyOrSymbol(stringObj, "symbol");
+    const companyArgument = filterByCompanyOrSymbol(stringObj, "company");
+    var symbolUndefined = false;
+    var companyUndefined = false;
+
+    symbolArgument.then(result => {
+        if (result === undefined) {
+            symbolUndefined = true;
+        }
+    });
+
+    companyArgument.then(result => {
+        if (result === undefined) {
+            companyUndefined = true;
+        }
+    });
+
+    if (symbolUndefined === false) {
+        return { successful: true, stock: symbolArgument };
+    }
+
+    if (companyUndefined === false) {
+        return { successful: true, stock: companyArgument };
+    }
+
+    return { successful: false, stock: "" };
 }
 
 async function addKeyword(newKeyword, keywordArray) {
@@ -116,6 +213,7 @@ async function addKeyword(newKeyword, keywordArray) {
     const keywordIsNew = !(keywordArray.includes(newKeyword));
     if (keywordIsNew) {
         keywordArray.push(newKeyword)
+        keywordArray.sort();
         return true;
     } else {
         return false;
@@ -128,13 +226,64 @@ async function removeKeyword(keywordToRemove, keywordArray) {
 
     if (index > -1) {
         keywordArray.splice(index, 1);
+        keywordArray.sort();
         return true;
     } else {
         return false;
     }
 }
 
-async function getGeneralNews() {
+async function filterArticles(articles, symbol, company, keywords) {
+    const wordsToFind = [];
+    if (symbol.length > 0) {
+        wordsToFind.push(symbol.toLowerCase());
+    }
+
+    if (company.length > 0) {
+        const companyWords = company.split(" ");
+        companyWords.forEach((word) => {
+            wordsToFind.push(word.toLowerCase());
+        });
+        wordsToFind.pop(); // Removes the last company word, which is often something like Inc., Limited, etc.
+    }
+
+    if (keywords.length > 0) {
+        keywords.forEach((keyword) => {
+            wordsToFind.push(keyword.toLowerCase());
+        });
+    }
+
+    const validArticles = [];
+
+    articles.forEach((article) => {
+        var validArticle = false;
+
+        try {
+            const headline = article.headline.toLowerCase();
+            const summary = article.summary.toLowerCase();
+            for (const word in wordsToFind) {
+                if (headline.includes(word)) {
+                    validArticle = true;
+                    break;
+                }
+                if (summary.includes(word)) {
+                    validArticle = true;
+                    break;
+                }
+            }
+        } catch {
+            // do nothing
+        }
+
+        if (validArticle) {
+            validArticles.push(article);
+        }
+    });
+
+    return validArticles;
+}
+
+async function getMarketNews() {
     /*
     List of attributes in response body:
     - category: ex. "technology", "business", "top news"
@@ -147,12 +296,19 @@ async function getGeneralNews() {
     - summary: ex. "Shares of Square soared on Tuesday evening after posting better-than-expected quarterly results and strong growth in its consumer payments app."
     - url: ex. "https://www.cnbc.com/2020/08/04/square-sq-earnings-q2-2020.html"
     */
-    const category = "general"; // values: general, forex, crypto, or merger
-    const url = `https://finnhub.io/api/v1/news?category=${category}&token=${API_KEY}`;
-    console.log(`fetching news from ${fromDate} to ${toDate}`);
-    const response = await axios.get(url);
+    const category1 = "general"; // values: general, forex, crypto, or merger
+    const category2 = "crypto";
+    const category3 = "merger";
 
-    return response.data.map(article => ({
+    const url1 = `https://finnhub.io/api/v1/news?category=${category1}&token=${API_KEY}`;
+    const url2 = `https://finnhub.io/api/v1/news?category=${category2}&token=${API_KEY}`;
+    const url3 = `https://finnhub.io/api/v1/news?category=${category3}&token=${API_KEY}`;
+
+    const response1 = await axios.get(url1);
+    const response2 = await axios.get(url2);
+    const response3 = await axios.get(url3);
+
+    const articles1 = response1.data.map(article => ({
         category: article.category,
         datetime: article.datetime,
         headline: article.headline,
@@ -160,9 +316,34 @@ async function getGeneralNews() {
         summary: article.summary,
         url: article.url
     }));
+
+    const articles2 = response2.data.map(article => ({
+        category: article.category,
+        datetime: article.datetime,
+        headline: article.headline,
+        source: article.source,
+        summary: article.summary,
+        url: article.url
+    }));
+
+    const articles3 = response3.data.map(article => ({
+        category: article.category,
+        datetime: article.datetime,
+        headline: article.headline,
+        source: article.source,
+        summary: article.summary,
+        url: article.url
+    }));
+
+    const combinedArticles = [...articles1, articles3]; // Crypto is not included, largely unrelated.
+    if (combinedArticles.length > 0) {
+        return { successful: true, articles: combinedArticles };
+    }
+
+    return { successful: false, articles: "" };
 }
 
-async function getCompanyNews(ticker) {
+async function getCompanyNews(symbol) {
     /*
     List of attributes in response body:
     - category: ex. "company news",
@@ -176,11 +357,10 @@ async function getCompanyNews(ticker) {
     - url: ex. "https://economictimes.indiatimes.com/industry/cons-products/electronics/more-sops-needed-to-boost-electronic-manufacturing-top-govt-official/articleshow/71321308.cms"
   
     */
-    const url = `https://finnhub.io/api/v1/company-news?symbol=${ticker}&from=${fromDate}&to=${toDate}&token=${API_KEY}`;
+    const url = `https://finnhub.io/api/v1/company-news?symbol=${symbol}&from=${fromDate}&to=${toDate}&token=${API_KEY}`;
     console.log(`fetching news from ${fromDate} to ${toDate}`);
     const response = await axios.get(url);
-
-    return response.data.map(article => ({
+    const articles = response.data.map(article => ({
         category: article.category,
         datetime: article.datetime,
         readableDatetime: formatUnixDatetime(article.datetime),
@@ -189,6 +369,14 @@ async function getCompanyNews(ticker) {
         summary: article.summary,
         url: article.url
     }));
+
+
+    if (articles.length > 0) {
+        return { successful: true, articles: articles };
+    }
+
+    return { successful: false, articles: "" };
+
 }
 
-module.exports = { keywords, addKeyword, removeKeyword, getGeneralNews, getCompanyNews };
+module.exports = { keywords, addKeyword, removeKeyword, getMarketNews, getCompanyNews, getStockInfo, filterArticles };
