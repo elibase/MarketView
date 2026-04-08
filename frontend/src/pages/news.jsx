@@ -179,6 +179,10 @@ export default function NewsView() {
     }, []);
 
 
+    let keywordSubtitle;
+    if (keywords.length === 0) keywordSubtitle = "0 Keywords";
+    else if (keywords.length === 1) keywordSubtitle = "1 Keyword";
+    else keywordSubtitle = `${keywords.length} Keywords`;
 
     return (
         <div class="main">
@@ -205,7 +209,7 @@ export default function NewsView() {
                 </div>
 
                 <div class="grid-container-item">
-                    <p>Keywords</p>
+                    <p>{keywordSubtitle}</p>
                     <div class="table-scroller">
                         {KeywordTable()}
                     </div>
