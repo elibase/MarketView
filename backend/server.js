@@ -21,8 +21,11 @@ app.get('/api/message', (req, res) => {
     res.json({ message: "Hello from the Node server!" });
 });
 
-// NEWS API CALLS START
+// News API calls
 app.use('/api/news', newsRoutes);
+
+// Stock API calls
+app.use('/api/stocks', stockInfoRoutes)
 
 app.get('/test-news', async (req, res) => {
     try {

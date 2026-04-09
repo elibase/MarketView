@@ -17,7 +17,8 @@
     "cors": "^2.8.6",
     "dotenv": "^17.3.1",
     "express": "^5.2.1",
-    "xlsx": "file:libs/xlsx-0.20.3.tgz"
+    "xlsx": "file:libs/xlsx-0.20.3.tgz",
+    "yahoo-finance2": "^3.14.0"
   },
   "devDependencies": {
     "nodemon": "^3.1.14"
