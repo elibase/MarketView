@@ -1,80 +1,81 @@
-import "../assets/analyzer.css"
+import { useState } from "react";
+import "../assets/analyzer.css";
 
-export default function AnalyzerView(){
-    return(
-        <div class="container">
-            
-            {/* <!-- Main Content --> */}
+export default function AnalyzerView() {
+    const [ticker, setTicker] = useState("");
+    const [data, setData] = useState(null);
 
-            <div class="main">
+    const handleAnalyze = async () => {
+        try {
+            const response = await fetch("http://localhost:3000/analyze", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ ticker })
+            });
 
-                {/* <!-- Header --> */}
+            const result = await response.json();
+            setData(result);
+        } catch (err) {
+            console.error(err);
+        }
+    };
 
-                <div class="header">
+    return (
+        <div className="container">
+            <div className="main">
+
+                <div className="header">
                     <h1>Stock Analyzer</h1>
                 </div>
 
-
-                    {/* <!-- Search --> */}
-
-                <div class="search">
-                    <input type="text" placeholder="Enter stock ticker (ex: TSLA)"/>
-                    <a class="btn analyze-btn" href="#">Analyze</a>
+                {/* Search */}
+                <div className="search">
+                    <input
+                        type="text"
+                        placeholder="Enter stock ticker (ex: TSLA)"
+                        value={ticker}
+                        onChange={(e) => setTicker(e.target.value)}
+                    />
+                    <button className="btn analyze-btn" onClick={handleAnalyze}>
+                        Analyze
+                    </button>
                 </div>
 
+                {data && (
+                    <>
+                        {/* Sentiment */}
+                        <div className="analysis-container">
+                            <div className="card sentiment">
+                                <div className="section-title">News Sentiment</div>
 
-                {/* <!-- Analysis Section --> */}
+                                <p><strong>Ticker:</strong> {data.ticker}</p>
+                                <p><strong>Sentiment Score:</strong> {data.sentiment.score}</p>
+                                <p><strong>Sentiment Label:</strong> {data.sentiment.label}</p>
+                            </div>
 
-                <div class="analysis-container">
+                            {/* Report */}
+                            <div className="card report">
+                                <div className="section-title">Report</div>
+                                <p>{data.sentiment.summary}</p>
+                            </div>
+                        </div>
 
-                    {/* <!-- Sentiment --> */}
+                        {/* Articles */}
+                        <div className="card articles">
+                            <div className="section-title">Recent News Articles</div>
 
-                    <div class="card sentiment">
-
-                        <div class="section-title">News Sentiment</div>
-
-                        <p><strong>Ticker:</strong> TSLA</p>
-                        <p><strong>Sentiment Score:</strong> +0.43</p>
-                        <p><strong>Sentiment Label:</strong> Positive</p>
-
-                    </div>
-
-
-                        {/* <!-- Report --> */}
-
-                    <div class="card report">
-
-                        <div class="section-title">Report</div>
-
-                        <p>
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                        Aenean commodo ligula eget dolor. Aenean massa.
-                        Cum sociis natoque penatibus et magnis dis parturient montes.
-                        Donec quam felis, ultricies nec, pellentesque eu, pretium quis.
-                        Nulla consequat massa quis enim.
-                        </p>
-
-                    </div>
-
-                </div>
-
-
-                {/* <!-- Recent Articles --> */}
-
-                <div class="card articles">
-
-                    <div class="section-title">Recent News Articles</div>
-
-                    <ul>
-                        <li><a class="news-link" href="#">Tesla Stock Surges After Earnings</a></li>
-                        <li><a class="news-link" href="#">Analysts Warn About Model Y Production Delays</a></li>
-                        <li><a class="news-link" href="#">Tesla Announces New AI Initiative</a></li>
-                    </ul>
-
-                </div>
+                            <ul>
+                                {data.articles.slice(0, 5).map((article, index) => (
+                                    <li key={index}>
+                                        {article.headline}
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                    </>
+                )}
 
             </div>
-
         </div>
     );
 }

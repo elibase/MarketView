@@ -3,6 +3,7 @@ const express = require('express')
 const cors = require('cors')
 const { keywords, addKeyword, removeKeyword, getGeneralNews, getCompanyNews } = require('./services/newsService')
 const stockInfoRoutes = require('./routes/stockInfoRoutes.js');
+const { analyzeSentiment } = require("./services/pythonService.js");
 const app = express()
 const port = 3000
 
@@ -67,6 +68,30 @@ app.get('/test-news', async (req, res) => {
             error: "Failed to fetch news",
             message: error.message
         });
+    }
+});
+
+app.post("/analyze", async (req, res) => {
+    try {
+        const { ticker } = req.body;
+
+        // get news for ticker
+        const articles = (await getCompanyNews(ticker)).slice(0, 10);
+
+
+        // send to python for sentiment
+        const sentiment = await analyzeSentiment(articles);
+
+        // return combined result
+        res.json({
+            ticker,
+            sentiment,
+            articles
+        });
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: "Failed to analyze stock" });
     }
 });
 
