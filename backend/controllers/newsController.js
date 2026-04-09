@@ -1,9 +1,10 @@
 const newsService = require('../services/newsService.js');
+const keywords = ["AMZN", "GOOG", "TSLA"] // Hardcoded
 
 exports.addKeyword = async (req, res) => {
     try {
         const keywordToAdd = req.body.message;
-        const keywordWasAdded = await addKeyword(keywordToAdd, keywords);
+        const keywordWasAdded = await newsService.addKeyword(keywordToAdd, keywords);
         res.json({ successful: keywordWasAdded });
     } catch {
         res.status(500).json({
@@ -16,7 +17,7 @@ exports.addKeyword = async (req, res) => {
 exports.removeKeyword = async (req, res) => {
     try {
         const keywordToRemove = req.body.message;
-        const keywordWasRemoved = await removeKeyword(keywordToRemove, keywords);
+        const keywordWasRemoved = await newsService.removeKeyword(keywordToRemove, keywords);
         res.json({ successful: keywordWasRemoved });
     } catch {
         res.status(500).json({

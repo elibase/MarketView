@@ -12,7 +12,7 @@ const XLSX = require('xlsx');
 const workbook = XLSX.readFile('./data/stocks-list.xlsx');
 
 // Code to create JSON object from 1st sheet of Excel file
-function createCompanyBySymbolJson() {
+function createCompanyBySymbolJson() { // Service
     const sheetName = workbook.SheetNames[0];
     const obj = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName]);
     const finalArray = [];
@@ -42,7 +42,7 @@ function createCompanyBySymbolJson() {
 //createCompanyBySymbolJson();
 
 // Code to create JSON object from 1rd sheet of Excel file
-function createStocksInformationJson() {
+function createStocksInformationJson() { // Service
     const sheetName = workbook.SheetNames[0];
     const obj = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName]);
     const finalArray = [];
@@ -72,7 +72,7 @@ function createStocksInformationJson() {
 //createStocksInformationJson();
 
 // Code to create JSON object from 3rd sheet of Excel file
-function createSymbolsByIndustryJson() {
+function createSymbolsByIndustryJson() { // Service
     const sheetName = workbook.SheetNames[2];
     const obj = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName]);
 
@@ -127,7 +127,7 @@ const thirtyDaysAgo = new Date();
 thirtyDaysAgo.setDate(today.getDate() - 30);
 const fromDate = thirtyDaysAgo.toISOString().split('T')[0];
 
-function formatUnixDatetime(datetime) {
+function formatUnixDatetime(datetime) { // Service
     const isoDate = new Date(datetime * 1000).toISOString();
     const dateObj = new Date(isoDate);
 
@@ -142,7 +142,7 @@ function formatUnixDatetime(datetime) {
     return readable; // Output: "Monday, May 20, 2024"
 }
 
-async function filterByCompanyOrSymbol(stringObj, objType) {
+async function filterByCompanyOrSymbol(stringObj, objType) { // Service
     var filter = "";
 
     if (objType.toLowerCase() === "symbol") {
@@ -155,7 +155,7 @@ async function filterByCompanyOrSymbol(stringObj, objType) {
     return entity;
 }
 
-async function filterByIndustry(industry, returnObjType) {
+async function filterByIndustry(industry, returnObjType) { // Service
     var filter = (arr, industry) => arr.filter(object => object["industry"].toLowerCase() === industry.toLowerCase());
     var filteredArray = filter(stocksInformation, industry);
     const finalArray = [];
@@ -179,7 +179,7 @@ async function filterByIndustry(industry, returnObjType) {
     }
 }
 
-async function getStockInfo(stringObj) {
+async function getStockInfo(stringObj) { // Service
     const symbolArgument = filterByCompanyOrSymbol(stringObj, "symbol");
     const companyArgument = filterByCompanyOrSymbol(stringObj, "company");
     var symbolUndefined = false;
@@ -208,7 +208,7 @@ async function getStockInfo(stringObj) {
     return { successful: false, stock: "" };
 }
 
-async function addKeyword(newKeyword, keywordArray) {
+async function addKeyword(newKeyword, keywordArray) { // Controller
     // Assumes that newKeyword is simply a string consisting of a word.
     const keywordIsNew = !(keywordArray.includes(newKeyword));
     if (keywordIsNew) {
@@ -220,7 +220,7 @@ async function addKeyword(newKeyword, keywordArray) {
     }
 }
 
-async function removeKeyword(keywordToRemove, keywordArray) {
+async function removeKeyword(keywordToRemove, keywordArray) { // Controller
     // Assumes that keywordToRemove is simply a string consisting of a word.
     const index = keywordArray.indexOf(keywordToRemove);
 
@@ -233,7 +233,7 @@ async function removeKeyword(keywordToRemove, keywordArray) {
     }
 }
 
-async function filterArticles(articles, symbol, company, keywords) {
+async function filterArticles(articles, symbol, company, keywords) { // Service
     const wordsToFind = [];
     if (symbol.length > 0) {
         wordsToFind.push(symbol.toLowerCase());
@@ -283,7 +283,7 @@ async function filterArticles(articles, symbol, company, keywords) {
     return validArticles;
 }
 
-async function getMarketNews() {
+async function getMarketNews() { // Controller
     /*
     List of attributes in response body:
     - category: ex. "technology", "business", "top news"
@@ -343,7 +343,7 @@ async function getMarketNews() {
     return { successful: false, articles: "" };
 }
 
-async function getCompanyNews(symbol) {
+async function getCompanyNews(symbol) { // Controller
     /*
     List of attributes in response body:
     - category: ex. "company news",
