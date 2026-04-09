@@ -3,7 +3,7 @@ const express = require('express')
 const cors = require('cors')
 const { keywords, addKeyword, removeKeyword, getCompanyNews } = require('./services/newsService')
 const newsRoutes = require('./routes/newsRoutes.js');
-const stockInfoRoutes = require('./routes/stockInfoRoutes.js);
+const stockInfoRoutes = require('./routes/stockInfoRoutes.js');
 const app = express()
 const port = 3000
 
