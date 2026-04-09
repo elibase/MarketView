@@ -1,8 +1,8 @@
 require("dotenv").config()
 const express = require('express')
 const cors = require('cors')
-const { keywords, addKeyword, removeKeyword, getGeneralNews, getCompanyNews } = require('./services/newsService')
-const stockInfoRoutes = require('./routes/stockInfoRoutes.js');
+const { keywords, addKeyword, removeKeyword, getCompanyNews } = require('./services/newsService')
+const newsRoutes = require('./routes/newsRoutes.js');
 const app = express()
 const port = 3000
 
@@ -21,23 +21,9 @@ app.get('/api/message', (req, res) => {
     res.json({ message: "Hello from the Node server!" });
 });
 
-// NEWS API CALLS START
-app.post('/api/addKeyword', async (req, res) => {
-    const keywordToAdd = req.body.message;
-    const keywordWasAdded = await addKeyword(keywordToAdd, keywords);
-    res.json({ successful: keywordWasAdded });
-});
+// News API calls
+app.use('/api/news', newsRoutes);
 
-app.post('/api/removeKeyword', async (req, res) => {
-    const keywordToRemove = req.body.message;
-    const keywordWasRemoved = await removeKeyword(keywordToRemove, keywords);
-    res.json({ successful: keywordWasRemoved });
-});
-
-app.post('/api/retrieveKeywords', async (req, res) => {
-    res.json({ message: keywords });
-});
-// NEWS API CALLS END
 // Stock API calls
 app.use('/api/stocks', stockInfoRoutes)
 
