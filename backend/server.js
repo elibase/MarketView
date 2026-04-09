@@ -26,7 +26,7 @@ app.get('/api/message', (req, res) => {
 app.use('/api/news', newsRoutes);
 
 // Stock API calls
-app.use('/api/stocks', stockInfoRoutes)
+app.use('/api/stocks', stockInfoRoutes);
 
 app.get('/test-news', async (req, res) => {
     try {
