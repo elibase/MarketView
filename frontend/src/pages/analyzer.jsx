@@ -3,20 +3,39 @@ import "../assets/analyzer.css";
 
 export default function AnalyzerView() {
     const [ticker, setTicker] = useState("");
-    const [data, setData] = useState(null);
+    const [result, setResult] = useState(null);
+    const [error, setError] = useState("");
 
     const handleAnalyze = async () => {
+        setError("");
+        setResult(null);
+
         try {
-            const response = await fetch("http://localhost:3000/analyze", {
+            const res = await fetch("http://localhost:3000/analyze", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ ticker })
             });
 
-            const result = await response.json();
-            setData(result);
+            if (!res.ok) {
+                throw new Error("Server error");
+            }
+
+            const data = await res.json();
+
+            // Handle no articles (e.g., XEQT without .TO)
+            if (!data.articles || data.articles.length === 0) {
+                setError(
+                    `No news found for "${ticker}". Try "${ticker.toUpperCase()}.TO" for Canadian stocks.`
+                );
+                return;
+            }
+
+            setResult(data);
+
         } catch (err) {
             console.error(err);
+            setError("Something went wrong. Please try again.");
         }
     };
 
@@ -24,6 +43,7 @@ export default function AnalyzerView() {
         <div className="container">
             <div className="main">
 
+                {/* Header */}
                 <div className="header">
                     <h1>Stock Analyzer</h1>
                 </div>
@@ -41,23 +61,47 @@ export default function AnalyzerView() {
                     </button>
                 </div>
 
-                {data && (
+                {/* Error Message */}
+                {error && (
+                    <div className="card" style={{ backgroundColor: "#ffe6e6", color: "#900" }}>
+                        <p>{error}</p>
+                    </div>
+                )}
+
+                {/* Results */}
+                {result && (
                     <>
-                        {/* Sentiment */}
                         <div className="analysis-container">
+
+                            {/* Sentiment */}
                             <div className="card sentiment">
                                 <div className="section-title">News Sentiment</div>
 
-                                <p><strong>Ticker:</strong> {data.ticker}</p>
-                                <p><strong>Sentiment Score:</strong> {data.sentiment.score}</p>
-                                <p><strong>Sentiment Label:</strong> {data.sentiment.label}</p>
+                                <p><strong>Ticker:</strong> {result?.ticker}</p>
+                                <p><strong>Sentiment Score:</strong> {result?.sentiment?.score}</p>
+                                <p>
+                                    <strong>Sentiment Label:</strong>{" "}
+                                    <span
+                                        style={{
+                                            color:
+                                                result?.sentiment?.label === "Positive"
+                                                    ? "green"
+                                                    : result?.sentiment?.label === "Negative"
+                                                        ? "red"
+                                                        : "black"
+                                        }}
+                                    >
+                                        {result?.sentiment?.label}
+                                    </span>
+                                </p>
                             </div>
 
                             {/* Report */}
                             <div className="card report">
                                 <div className="section-title">Report</div>
-                                <p>{data.sentiment.summary}</p>
+                                <p>{result?.sentiment?.summary}</p>
                             </div>
+
                         </div>
 
                         {/* Articles */}
@@ -65,9 +109,20 @@ export default function AnalyzerView() {
                             <div className="section-title">Recent News Articles</div>
 
                             <ul>
-                                {data.articles.slice(0, 5).map((article, index) => (
-                                    <li key={index}>
-                                        {article.headline}
+                                {result?.articles?.slice(0, 5).map((a, i) => (
+                                    <li key={i}>
+                                        {a.url ? (
+                                            <a
+                                                className="news-link"
+                                                href={a.url}
+                                                target="_blank"
+                                                rel="noreferrer"
+                                            >
+                                                {a.headline}
+                                            </a>
+                                        ) : (
+                                            a.headline
+                                        )}
                                     </li>
                                 ))}
                             </ul>
@@ -79,3 +134,4 @@ export default function AnalyzerView() {
         </div>
     );
 }
+
