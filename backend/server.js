@@ -3,6 +3,7 @@ const express = require('express')
 const cors = require('cors')
 const newsRoutes = require('./routes/newsRoutes.js');
 const stockInfoRoutes = require('./routes/stockInfoRoutes.js');
+const newsService = require('./services/newsService.js')
 const { analyzeSentiment } = require("./services/pythonService.js");
 const app = express()
 const port = 3000
@@ -75,7 +76,7 @@ app.post("/analyze", async (req, res) => {
         const { ticker } = req.body;
 
         // get news for ticker
-        const articles = (await getCompanyNews(ticker)).slice(0, 10);
+        const articles = (await newsService.getArticleInfo(ticker)).slice(0, 10);
 
 
         // send to python for sentiment

@@ -379,4 +379,26 @@ async function getCompanyNews(symbol) { // Controller
 
 }
 
-module.exports = { keywords, addKeyword, removeKeyword, getCompanyNews };
+async function getArticleInfo(ticker) {
+    /*
+    List of attributes in response body:
+    - category
+    - datetime
+    - headline
+    - id
+    - image
+    - related
+    - source
+    - summary
+    - url
+    */
+    const url = `https://finnhub.io/api/v1/company-news?symbol=${ticker}&from=${fromDate}&to=${toDate}&token=${API_KEY}`;
+    console.log(`fetching news from ${fromDate} to ${toDate}`);
+    const response = await axios.get(url);
+
+    return response.data.map(article => ({
+        headline: article.headline,
+        summary: article.summary,
+    }))
+}
+module.exports = { keywords, addKeyword, removeKeyword, getCompanyNews, getArticleInfo};
