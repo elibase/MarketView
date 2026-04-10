@@ -1,5 +1,7 @@
 import "../assets/news.css"
+import "../services/api.js";
 import React, { useEffect, useState } from 'react';
+import { addKeyword, removeKeyword, getKeywords, getArticles } from "../services/api.js";
 
 export default function NewsView() {
     const [refresh, setRefresh] = useState(0);
@@ -10,36 +12,22 @@ export default function NewsView() {
     const [keywords, setKeywords] = useState([""]);
     const [articles, setArticles] = useState([]);
 
-    const handleRetrieveKeywords = async (event) => {
+    const callGetKeywords = async (event) => {
         try {
-            const response = await fetch('http://localhost:3000/api/retrieveKeywords', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' }
-            });
-            const result = await response.json();
+            const result = await getKeywords();
             const retrievedKeywords = result.message.sort();
-            //console.log("Keywords retrieved: ", retrievedKeywords);
             setKeywords(retrievedKeywords);
         } catch (error) {
             console.error("Error calling server: ", error)
         }
     };
 
-    const addKeyword = async (enteredInput) => {
+    const callAddKeyword = async (enteredInput) => {
         event.preventDefault(); // Needed to prevent page reload.
-
-        const inputInSuggestions = suggestions.includes(enteredInput);
-
         const keywordToAdd = enteredInput.split("-").map(identifier => identifier.trim())[0].toUpperCase();
         if (keywordToAdd) {
             try {
-                const response = await fetch('http://localhost:3000/api/addKeyword', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ message: keywordToAdd }) // Your parameters
-                });
-                const result = await response.json();
-                //console.log("Adding keyword was successful: ", result.successful);
+                const result = await addKeyword(keywordToAdd);
                 if (result.successful) {
                     setKeywords([...keywords, keywordToAdd].sort());
                 }
@@ -51,14 +39,9 @@ export default function NewsView() {
         }
     };
 
-    const getArticles = async (articleKeyword) => {
+    const callGetArticles = async (articleKeyword) => {
         try {
-            const response = await fetch('http://localhost:3000/api/getArticles', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ message: articleKeyword }) // Your parameters
-            });
-            const result = await response.json();
+            const result = await getArticles(articleKeyword);
             //console.log("Articles received: ", result.message);
             setArticles(result.message);
         } catch (error) {
@@ -82,16 +65,10 @@ export default function NewsView() {
 
 
     function KeywordTable() {
-        const removeKeyword = async (keywordName) => {
+        const callRemoveKeyword = async (keywordName) => {
             if (keywordName) {
                 try {
-                    const response = await fetch('http://localhost:3000/api/removeKeyword', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ message: keywordName }) // Your parameters
-                    });
-                    const result = await response.json();
-                    console.log("Removal of keyword was successful: ", result.successful)
+                    const result = await removeKeyword(keywordName);
                     if (result.successful) {
                         const updatedKeywords = keywords.filter(keyword => keyword !== keywordName).sort();
                         setKeywords(updatedKeywords);
@@ -117,8 +94,8 @@ export default function NewsView() {
                         keywords.map((keyword) => (
                             <tr key={keyword}>
                                 <td>{keyword}</td>
-                                <td><button class="btn" onClick={() => getArticles(keyword)}>Gather Articles</button></td>
-                                <td><button class="btn" onClick={() => removeKeyword(keyword)}>Remove</button></td>
+                                <td><button class="btn" onClick={() => callGetArticles(keyword)}>Gather Articles</button></td>
+                                <td><button class="btn" onClick={() => callRemoveKeyword(keyword)}>Remove</button></td>
                             </tr>
                         ))
                     ) : (
@@ -190,13 +167,13 @@ export default function NewsView() {
 
     useEffect(() => {
         console.log("Page loaded!");
-        handleRetrieveKeywords(); // Retrieve any articles from server (in theory it would use user ID, in practice it retrieves a hardcoded list)
+        callGetKeywords(); // Retrieve any articles from server (in theory it would use user ID, in practice it retrieves a hardcoded list)
 
         fetch('../../suggestions.txt') // Ensure file is in the public folder
             .then(response => response.text())
             .then(text => {
                 // Split by newline and remove empty strings
-                const lines = text.split('\n').filter(line => line.trim() !== "").map(line => line.substring(0, line.length-2));
+                const lines = text.split('\n').filter(line => line.trim() !== "").map(line => line.substring(0, line.length - 1));
                 setSuggestions(lines);
             });
     }, []);
@@ -207,6 +184,7 @@ export default function NewsView() {
     else keywordSubtitle = `${keywords.length} Symbols`;
 
     return (
+
         <div class="main">
             <div class="header">
                 <h1>Financial News</h1>
@@ -214,7 +192,6 @@ export default function NewsView() {
 
             <div class="grid-container">
                 <div class="grid-container-item">
-                    {/* <form onSubmit={handleAddKeyword}> */}
                     <form>
                         <div class="search">
                             <input
@@ -231,7 +208,7 @@ export default function NewsView() {
                                 ))}
                             </datalist>
                         </div>
-                        <button class="btn" onClick={() => addKeyword(input)}>Add Symbol</button>
+                        <button class="btn" onClick={() => callAddKeyword(input)}>Add Symbol</button>
                     </form>
                 </div>
 
