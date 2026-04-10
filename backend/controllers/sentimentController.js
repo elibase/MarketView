@@ -1,4 +1,4 @@
-const { getStockNews } = require("../services/newsService");
+const { getStockNews } = require("../services/newsService.js");
 const { analyzeSentiment } = require("../services/pythonService.js");
 
 async function getStockSentiment(req, res) {
