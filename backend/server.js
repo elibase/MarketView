@@ -1,8 +1,8 @@
 require("dotenv").config()
 const express = require('express')
 const cors = require('cors')
-const { keywords, addKeyword, removeKeyword, getCompanyNews } = require('./services/newsService')
 const newsRoutes = require('./routes/newsRoutes.js');
+const stockInfoRoutes = require('./routes/stockInfoRoutes.js');
 const app = express()
 const port = 3000
 
@@ -23,9 +23,22 @@ app.get('/api/message', (req, res) => {
 
 // News API calls
 app.use('/api/news', newsRoutes);
+/*
+app.use('/api/news/addKeyword', newsRoutes);
+app.use('/api/news/removeKeyword', newsRoutes);
+app.use('/api/news/retrieveKeywords', newsRoutes);
+app.use('/api/news/getArticles', newsRoutes);
+*/
+
+/*
+app.post('/api/news/addKeyword', newsRoutes);
+app.post('/api/news/removeKeyword', newsRoutes);
+app.post('/api/news/retrieveKeywords', newsRoutes);
+app.post('/api/news/getArticles', newsRoutes);
+*/
 
 // Stock API calls
-app.use('/api/stocks', stockInfoRoutes)
+app.use('/api/stocks', stockInfoRoutes);
 
 app.get('/test-news', async (req, res) => {
     try {

@@ -358,7 +358,7 @@ async function getCompanyNews(symbol) { // Controller
   
     */
     const url = `https://finnhub.io/api/v1/company-news?symbol=${symbol}&from=${fromDate}&to=${toDate}&token=${API_KEY}`;
-    console.log(`fetching news from ${fromDate} to ${toDate}`);
+    //console.log(`fetching news from ${fromDate} to ${toDate}`);
     const response = await axios.get(url);
     const articles = response.data.map(article => ({
         category: article.category,
