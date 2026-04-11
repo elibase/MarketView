@@ -24,9 +24,9 @@ def analyze(data: RequestData):
     avg_score = sum(scores) / len(scores)
 
     label = "Neutral"
-    if avg_score > 0.05:
+    if avg_score > 0.3:
         label = "Positive"
-    elif avg_score < -0.05:
+    elif avg_score < 0.2:
         label = "Negative"
 
     return {
